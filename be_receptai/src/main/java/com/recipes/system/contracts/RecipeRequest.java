@@ -3,23 +3,31 @@ package com.recipes.system.contracts;
 import com.recipes.system.models.RecipeModel;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class RecipeRequest {
     private String title;
     private String description;
     private String imageUrl;
-    private String price;
-    private String difficulty;
+    private RecipeModel.Price price;
+    private RecipeModel.Difficulty difficulty;
     private int timeRequired;
+
+    private List<ProductRequest> products;
 
     public static RecipeModel fromRecipeRequest(RecipeRequest request) {
         return new RecipeModel(
                 request.getTitle(),
                 request.getDescription(),
                 request.getImageUrl(),
-                request.getDifficulty(),
+                request.getPrice(),
                 request.getDifficulty(),
                 request.getTimeRequired()
         );
+    }
+
+    public RecipeRequest(){
+
     }
 }
