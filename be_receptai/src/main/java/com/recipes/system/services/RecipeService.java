@@ -1,8 +1,11 @@
 package com.recipes.system.services;
 
+import com.recipes.system.contracts.ProductResponse;
 import com.recipes.system.contracts.QuantityRequest;
 import com.recipes.system.contracts.RecipeRequest;
+import com.recipes.system.contracts.RecipeResponse;
 import com.recipes.system.models.ProductModel;
+import com.recipes.system.models.ProductRecipeModel;
 import com.recipes.system.models.RecipeModel;
 import com.recipes.system.models.UserModel;
 import com.recipes.system.repository.ProductRepository;
@@ -10,6 +13,7 @@ import com.recipes.system.repository.RecipeRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
 
 @Service
 public class RecipeService {
@@ -30,7 +34,7 @@ public class RecipeService {
         RecipeModel recipeModel = RecipeRequest.fromRecipeRequest(request);
         recipeModel.setUser(user);
 
-        request.getProducts().stream().forEach(it -> {
+        request.getProducts().forEach(it -> {
             ProductModel product = productRepository.findById(it.getProductId()).orElseThrow(()->{
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Product does not exists");
             });
@@ -39,5 +43,13 @@ public class RecipeService {
         });
 
         recipeRepository.save(recipeModel);
+    }
+
+    public RecipeResponse getRecipe(Long id) {
+        RecipeModel recipe = recipeRepository.findById(id).orElseThrow(()->{
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Recipe does not exist");
+        });
+
+        return RecipeResponse.fromRecipeProducts(recipe);
     }
 }

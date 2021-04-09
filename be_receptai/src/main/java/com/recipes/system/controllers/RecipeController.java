@@ -1,11 +1,9 @@
 package com.recipes.system.controllers;
 
 import com.recipes.system.contracts.RecipeRequest;
+import com.recipes.system.contracts.RecipeResponse;
 import com.recipes.system.services.RecipeService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/recipe")
@@ -20,5 +18,10 @@ public class RecipeController {
     @PostMapping("/")
     public void addRecipe(@RequestBody RecipeRequest recipeRequest){
         recipeService.addRecipe(recipeRequest);
+    }
+
+    @GetMapping("/{id}")
+    public RecipeResponse getRecipe(@PathVariable Long id){
+        return recipeService.getRecipe(id);
     }
 }
