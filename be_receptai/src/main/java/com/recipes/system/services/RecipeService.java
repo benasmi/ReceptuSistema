@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -99,5 +100,36 @@ public class RecipeService {
         recipe.removeAllProducts();
 
         recipeRepository.delete(recipe);
+    }
+
+    public void addProducts(Long id, List<ProductRequest> products) {
+        UserModel user = authService.getCurrentUser();
+        RecipeModel recipe = getRecipeById(id);
+
+        checkIfOwner(user, recipe);
+
+        List<ProductModel> productModels = productRepository.findByIdIn(
+                products.stream()
+                        .map(ProductRequest::getProductId)
+                        .collect(Collectors.toList())
+        );
+
+        Iterator<ProductRequest> it1 = products.iterator();
+        Iterator<ProductModel> it2 = productModels.iterator();
+
+        while (it1.hasNext() && it2.hasNext()) {
+            recipe.addProductsToRecipe(it2.next(), it1.next());
+        }
+
+        recipeRepository.save(recipe);
+    }
+
+    public void removeProducts(Long id, List<Long> productsIds) {
+        UserModel user = authService.getCurrentUser();
+        RecipeModel recipe = getRecipeById(id);
+
+        checkIfOwner(user, recipe);
+        productsIds.forEach(recipe::deleteProduct);
+
     }
 }

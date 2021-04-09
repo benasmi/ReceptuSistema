@@ -1,5 +1,6 @@
 package com.recipes.system.controllers;
 
+import com.recipes.system.contracts.ProductRequest;
 import com.recipes.system.contracts.RecipeRequest;
 import com.recipes.system.contracts.RecipeResponse;
 import com.recipes.system.models.RecipeModel;
@@ -38,6 +39,18 @@ public class RecipeController {
                                              @RequestBody RecipeRequest recipeRequest){
         RecipeModel model = recipeService.updateRecipe(id, recipeRequest);
         return RecipeResponse.headerFromRecipeProducts(model);
+    }
+
+    @PostMapping("/{id}/products")
+    public void addProducts(@PathVariable Long id,
+                            @RequestBody List<ProductRequest> products){
+        recipeService.addProducts(id, products);
+    }
+
+    @DeleteMapping("/{id}/products")
+    public void removeProducts(@PathVariable Long id,
+                            @RequestBody List<Long> productsIds){
+        recipeService.removeProducts(id, productsIds);
     }
 
     @DeleteMapping("/{id}")
