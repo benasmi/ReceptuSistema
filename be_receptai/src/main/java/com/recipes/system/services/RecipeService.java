@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -53,6 +54,12 @@ public class RecipeService {
         });
     }
 
+    private void checkIfOwner(UserModel user, RecipeModel recipe){
+        if(!recipe.getUser().getId().equals(user.getId())){
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Only owner can edit his recipe");
+        }
+    }
+
     public RecipeResponse getRecipe(Long id) {
         RecipeModel recipe = getRecipeById(id);
         return RecipeResponse.fromRecipeProducts(recipe);
@@ -76,11 +83,21 @@ public class RecipeService {
         UserModel user = authService.getCurrentUser();
         RecipeModel recipe = getRecipeById(id);
 
-        if(!recipe.getUser().getId().equals(user.getId())){
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Only owner can edit his recipe");
-        }
+        checkIfOwner(user, recipe);
 
         recipeModelMapper.updateRecipeFromDto(recipeRequest, recipe);
         return recipeRepository.save(recipe);
+    }
+
+    public void deleteRecipe(Long id) {
+        UserModel user = authService.getCurrentUser();
+        RecipeModel recipe = getRecipeById(id);
+
+        checkIfOwner(user, recipe);
+
+        recipe.setUser(null);
+        recipe.removeAllProducts();
+
+        recipeRepository.delete(recipe);
     }
 }

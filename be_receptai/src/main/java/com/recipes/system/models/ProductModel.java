@@ -23,6 +23,7 @@ public class ProductModel {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ProductRecipeModel> productRecipeList;
 
+
     public ProductModel(String name) {
        this.name = name;
     }

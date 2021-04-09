@@ -14,11 +14,11 @@ public class ProductRecipeModel implements Serializable {
     @EmbeddedId
     private ProductRecipeModelId productRecipeModelId = new ProductRecipeModelId();
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH}, fetch = FetchType.LAZY)
     @MapsId("product_id")
     private ProductModel product;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH}, fetch = FetchType.LAZY)
     @MapsId("recipe_id")
     private RecipeModel recipe;
 

@@ -39,4 +39,9 @@ public class RecipeController {
         RecipeModel model = recipeService.updateRecipe(id, recipeRequest);
         return RecipeResponse.headerFromRecipeProducts(model);
     }
+
+    @DeleteMapping("/{id}")
+    public void deleteRecipe(@PathVariable Long id){
+        recipeService.deleteRecipe(id);
+    }
 }

@@ -4,10 +4,7 @@ import com.recipes.system.contracts.QuantityRequest;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Data
@@ -44,6 +41,13 @@ public class RecipeModel {
     public void addProductsToRecipe(ProductModel product, QuantityRequest quantity){
         ProductRecipeModel recipeModel = new ProductRecipeModel(product, this, quantity.getQuantity(), quantity.getQuantityType());
         productRecipeList.add(recipeModel);
+    }
+
+    public void removeAllProducts(){
+        for(ProductRecipeModel model: productRecipeList){
+            model.setProduct(null);
+            model.setRecipe(null);
+        }
     }
 
     public RecipeModel(String title, String description, String imageUrl, Price price, Difficulty difficulty, int timeRequired) {
