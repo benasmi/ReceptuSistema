@@ -1,8 +1,8 @@
 package com.recipes.system.services;
 
 import com.recipes.system.contracts.*;
+import com.recipes.system.mappers.RecipeModelMapper;
 import com.recipes.system.models.ProductModel;
-import com.recipes.system.models.ProductRecipeModel;
 import com.recipes.system.models.RecipeModel;
 import com.recipes.system.models.UserModel;
 import com.recipes.system.repository.ProductRepository;
@@ -21,11 +21,13 @@ public class RecipeService {
     private final RecipeRepository recipeRepository;
     private final ProductRepository productRepository;
     private final AuthService authService;
+    private final RecipeModelMapper recipeModelMapper;
 
-    public RecipeService(RecipeRepository recipeRepository, ProductRepository productRepository, AuthService authService) {
+    public RecipeService(RecipeRepository recipeRepository, ProductRepository productRepository, AuthService authService, RecipeModelMapper recipeModelMapper) {
         this.recipeRepository = recipeRepository;
         this.productRepository = productRepository;
         this.authService = authService;
+        this.recipeModelMapper = recipeModelMapper;
     }
 
     public void addRecipe(RecipeRequest request){
@@ -45,14 +47,16 @@ public class RecipeService {
         recipeRepository.save(recipeModel);
     }
 
-    public RecipeResponse getRecipe(Long id) {
-        RecipeModel recipe = recipeRepository.findById(id).orElseThrow(()->{
+    private RecipeModel getRecipeById(Long id){
+        return recipeRepository.findById(id).orElseThrow(()->{
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Recipe does not exist");
         });
-
-        return RecipeResponse.fromRecipeProducts(recipe);
     }
 
+    public RecipeResponse getRecipe(Long id) {
+        RecipeModel recipe = getRecipeById(id);
+        return RecipeResponse.fromRecipeProducts(recipe);
+    }
 
 
     public List<RecipeResponse> getUserRecipes(boolean full) {
@@ -66,5 +70,17 @@ public class RecipeService {
                     .collect(Collectors.toList());
 
         return recipes;
+    }
+
+    public RecipeModel updateRecipe(Long id, RecipeRequest recipeRequest) {
+        UserModel user = authService.getCurrentUser();
+        RecipeModel recipe = getRecipeById(id);
+
+        if(!recipe.getUser().getId().equals(user.getId())){
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Only owner can edit his recipe");
+        }
+
+        recipeModelMapper.updateRecipeFromDto(recipeRequest, recipe);
+        return recipeRepository.save(recipe);
     }
 }
