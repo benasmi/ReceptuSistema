@@ -1,5 +1,6 @@
 package com.recipes.system.contracts;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.recipes.system.models.RecipeModel;
 import lombok.Data;
 
@@ -7,21 +8,18 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Data
-public class RecipeResponse {
-    private String title;
-    private String description;
-    private String imageUrl;
-    private RecipeModel.Price price;
-    private RecipeModel.Difficulty difficulty;
+public class RecipeResponse extends RecipeHeaderResponse{
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<ProductResponse> products;
 
     public RecipeResponse(String title, String description, String imageUrl, RecipeModel.Price price, RecipeModel.Difficulty difficulty, List<ProductResponse> products) {
-        this.title = title;
-        this.description = description;
-        this.imageUrl = imageUrl;
-        this.price = price;
-        this.difficulty = difficulty;
+        super(title, description, imageUrl, price, difficulty);
         this.products = products;
+    }
+
+    public RecipeResponse(){
+
     }
 
     public static RecipeResponse fromRecipeProducts(RecipeModel recipeModel){
@@ -37,8 +35,20 @@ public class RecipeResponse {
         );
     }
 
-    public RecipeResponse(){
-
+    public RecipeResponse(RecipeModel recipeModel){
+        super(
+                recipeModel.getTitle(),
+                recipeModel.getDescription(),
+                recipeModel.getImageUrl(),
+                recipeModel.getPrice(),
+                recipeModel.getDifficulty()
+        );
     }
+
+    public static RecipeResponse headerFromRecipeProducts(RecipeModel recipeModel){
+        return new RecipeResponse(recipeModel);
+    }
+
+
 
 }

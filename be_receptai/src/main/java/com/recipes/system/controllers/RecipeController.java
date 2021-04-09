@@ -5,6 +5,8 @@ import com.recipes.system.contracts.RecipeResponse;
 import com.recipes.system.services.RecipeService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/recipe")
 public class RecipeController {
@@ -23,5 +25,17 @@ public class RecipeController {
     @GetMapping("/{id}")
     public RecipeResponse getRecipe(@PathVariable Long id){
         return recipeService.getRecipe(id);
+    }
+
+    /**
+     *
+     * @param full recipe or header recipe
+     *            ex. /recipe/user/?full=true - returns full recipe
+     *                /recipe/user - return header recipe
+     * @return user recipes
+     */
+    @GetMapping("/user")
+    public List<RecipeResponse> getUserRecipes(@RequestParam(name = "full", defaultValue = "false") boolean full){
+        return recipeService.getUserRecipes(full);
     }
 }

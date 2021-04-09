@@ -1,9 +1,6 @@
 package com.recipes.system.services;
 
-import com.recipes.system.contracts.ProductResponse;
-import com.recipes.system.contracts.QuantityRequest;
-import com.recipes.system.contracts.RecipeRequest;
-import com.recipes.system.contracts.RecipeResponse;
+import com.recipes.system.contracts.*;
 import com.recipes.system.models.ProductModel;
 import com.recipes.system.models.ProductRecipeModel;
 import com.recipes.system.models.RecipeModel;
@@ -13,6 +10,9 @@ import com.recipes.system.repository.RecipeRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -51,5 +51,20 @@ public class RecipeService {
         });
 
         return RecipeResponse.fromRecipeProducts(recipe);
+    }
+
+
+
+    public List<RecipeResponse> getUserRecipes(boolean full) {
+        UserModel user = authService.getCurrentUser();
+
+        List<RecipeModel> userRecipes = recipeRepository.findAllByUser(user);
+        List<RecipeResponse> recipes;
+
+        recipes = userRecipes.stream()
+                    .map(full ? RecipeResponse::fromRecipeProducts : RecipeResponse::headerFromRecipeProducts)
+                    .collect(Collectors.toList());
+
+        return recipes;
     }
 }
