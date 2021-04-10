@@ -14,7 +14,7 @@ public class RecipeRequest {
     private RecipeModel.Difficulty difficulty;
     private int timeRequired;
 
-    private List<ProductRequest> products;
+    private List<ProductRecipeRequest> products;
 
     public static RecipeModel fromRecipeRequest(RecipeRequest request) {
         return new RecipeModel(

@@ -1,6 +1,6 @@
 package com.recipes.system.controllers;
 
-import com.recipes.system.contracts.ProductRequest;
+import com.recipes.system.contracts.ProductRecipeRequest;
 import com.recipes.system.contracts.RecipeRequest;
 import com.recipes.system.contracts.RecipeResponse;
 import com.recipes.system.models.RecipeModel;
@@ -43,7 +43,7 @@ public class RecipeController {
 
     @PostMapping("/{id}/products")
     public void addProducts(@PathVariable Long id,
-                            @RequestBody List<ProductRequest> products){
+                            @RequestBody List<ProductRecipeRequest> products){
         recipeService.addProducts(id, products);
     }
 

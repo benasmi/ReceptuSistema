@@ -1,26 +1,23 @@
 package com.recipes.system.contracts;
 
 import com.recipes.system.models.ProductModel;
-import com.recipes.system.models.ProductRecipeModel;
 import lombok.Data;
 
 @Data
 public class ProductResponse {
+    private Long id;
     private String name;
-    private int quantity;
-    private ProductRecipeModel.Quantity quantityType;
 
-    public ProductResponse(String name, int quantity, ProductRecipeModel.Quantity quantityType) {
+    public ProductResponse(Long id, String name) {
+        this.id = id;
         this.name = name;
-        this.quantity = quantity;
-        this.quantityType = quantityType;
     }
 
-    public static ProductResponse fromProductRecipe(ProductRecipeModel model){
-        return new ProductResponse(
-                model.getProduct().getName(),
-                model.getQuantity(),
-                model.getQuantityType()
-        );
+    public ProductResponse(){
+
+    }
+
+    public static ProductResponse fromProduct(ProductModel productModel){
+        return new ProductResponse(productModel.getId(), productModel.getName());
     }
 }

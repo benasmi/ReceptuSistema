@@ -11,9 +11,9 @@ import java.util.stream.Collectors;
 public class RecipeResponse extends RecipeHeaderResponse{
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private List<ProductResponse> products;
+    private List<ProductRecipeResponse> products;
 
-    public RecipeResponse(String title, String description, String imageUrl, RecipeModel.Price price, RecipeModel.Difficulty difficulty, List<ProductResponse> products) {
+    public RecipeResponse(String title, String description, String imageUrl, RecipeModel.Price price, RecipeModel.Difficulty difficulty, List<ProductRecipeResponse> products) {
         super(title, description, imageUrl, price, difficulty);
         this.products = products;
     }
@@ -30,7 +30,7 @@ public class RecipeResponse extends RecipeHeaderResponse{
                 recipeModel.getPrice(),
                 recipeModel.getDifficulty(),
                 recipeModel.getProductRecipeList().stream()
-                        .map(ProductResponse::fromProductRecipe)
+                        .map(ProductRecipeResponse::fromProductRecipe)
                         .collect(Collectors.toList())
         );
     }

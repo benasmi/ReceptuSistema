@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -102,7 +101,7 @@ public class RecipeService {
         recipeRepository.delete(recipe);
     }
 
-    public void addProducts(Long id, List<ProductRequest> products) {
+    public void addProducts(Long id, List<ProductRecipeRequest> products) {
         UserModel user = authService.getCurrentUser();
         RecipeModel recipe = getRecipeById(id);
 
@@ -110,11 +109,11 @@ public class RecipeService {
 
         List<ProductModel> productModels = productRepository.findByIdIn(
                 products.stream()
-                        .map(ProductRequest::getProductId)
+                        .map(ProductRecipeRequest::getProductId)
                         .collect(Collectors.toList())
         );
 
-        Iterator<ProductRequest> it1 = products.iterator();
+        Iterator<ProductRecipeRequest> it1 = products.iterator();
         Iterator<ProductModel> it2 = productModels.iterator();
 
         while (it1.hasNext() && it2.hasNext()) {
