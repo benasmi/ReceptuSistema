@@ -1,4 +1,5 @@
 import axios, { AxiosError, AxiosPromise, AxiosRequestConfig, AxiosResponse } from 'axios';
+import { getCookie } from '../utils';
 
 
 export interface IGetRequest {
@@ -22,8 +23,7 @@ export interface IPostMultipartRequest {
  */
 const request = async function(options: AxiosRequestConfig, contentType = '') {
 
-  //todo: Get JWT from cookies or local storage once login form is up.
-  const token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJibUBnbWFpbC5jb20iLCJleHAiOjE2MTg4MzUwODV9.bnf3raB7J4gUc-uc5AbGWsKHytxnMhRDQSAbRCBR81jbpoRyE8Q_UAtOdyDZ0Zshy2YaC7bTD0x3Lm0R88Id1A';
+  const token = getCookie("jwt")
   const header = {
     'Content-Type': contentType === '' ? 'application/json' : contentType,
     Accept: 'application/json',

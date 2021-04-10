@@ -5,11 +5,25 @@ import App from './App';
 import { store } from './app/store';
 import { Provider } from 'react-redux';
 import * as serviceWorker from './serviceWorker';
+import AuthenticatedRoute from './AuthenticatedRoute';
+import LoginPage from './pages/login/LoginPage';
+import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
+
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <App />
+      <Router>
+        <Switch>
+          <Route path='/login'>
+            <LoginPage />
+          </Route>
+          <AuthenticatedRoute path='/app'>
+            <App />
+          </AuthenticatedRoute>
+          <Redirect to={'/app'} />
+        </Switch>
+      </Router>
     </Provider>
   </React.StrictMode>,
   document.getElementById('root')

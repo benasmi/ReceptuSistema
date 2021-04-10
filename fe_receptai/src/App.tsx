@@ -1,44 +1,24 @@
-import React, { useEffect, useState } from 'react';
-import logo from './logo.svg';
+import React, { useEffect } from 'react';
 import './App.css';
-import {getProducts} from './api/productsApi';
-import { AxiosError } from 'axios';
+import { getProfile } from './features/auth/authSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from './app/store';
 
-interface IProduct{
-  id: number;
-  name: string;
-}
 
 function App() {
 
-  const [products, setProducts] = useState<IProduct[]>([])
-  
-  useEffect(()=>{
-    getProducts().then((data: IProduct[])=>{
-      setProducts(data)
-    }).catch((err: AxiosError<Error>) =>{
-      console.log(err)
-    })
-  },[])
+  const { profile } = useSelector((state: RootState) => state.auth);
+  const dispatch = useDispatch();
 
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+  useEffect(() => {
+    dispatch(getProfile());
+  }, []);
 
-        {
-          products.length > 0 ? products.map((item: IProduct) => {
-            return <div>
-              {item.name}
-            </div>
-          }) : <div>
-            Add products to products table in Backend and see the results.
-          </div>
-        }
-
-      </header>
+  return profile ? (
+    <div className='App'>
+      Main app for authenticated user: {profile.email}
     </div>
-  );
+  ) : <div>Loading...</div>;
 }
 
 export default App;
