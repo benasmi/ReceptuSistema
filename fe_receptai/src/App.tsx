@@ -4,6 +4,14 @@ import { getProfile } from './features/auth/authSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from './app/store';
 
+/*
+todo:
+  1. To create materialSlice (that has general data like products, allergenes etc.) and load here
+  2. Show loading until all resources are loaded
+  3. Add router inside this component + navbar
+  4. My recipes navbar option and components for it
+ */
+
 
 function App() {
 
