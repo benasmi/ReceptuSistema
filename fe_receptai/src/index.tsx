@@ -8,6 +8,7 @@ import * as serviceWorker from './serviceWorker';
 import AuthenticatedRoute from './AuthenticatedRoute';
 import LoginPage from './pages/login/LoginPage';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 
 ReactDOM.render(
