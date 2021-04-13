@@ -13,8 +13,8 @@ public class RecipeResponse extends RecipeHeaderResponse{
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<ProductRecipeResponse> products;
 
-    public RecipeResponse(String title, String description, String imageUrl, RecipeModel.Price price, RecipeModel.Difficulty difficulty, List<ProductRecipeResponse> products) {
-        super(title, description, imageUrl, price, difficulty);
+    public RecipeResponse(String title, String description, String imageUrl, RecipeModel.Price price, RecipeModel.Difficulty difficulty, List<ProductRecipeResponse> products, Long id) {
+        super(title, description, imageUrl, price, difficulty, id);
         this.products = products;
     }
 
@@ -31,7 +31,8 @@ public class RecipeResponse extends RecipeHeaderResponse{
                 recipeModel.getDifficulty(),
                 recipeModel.getProductRecipeList().stream()
                         .map(ProductRecipeResponse::fromProductRecipe)
-                        .collect(Collectors.toList())
+                        .collect(Collectors.toList()),
+                recipeModel.getId()
         );
     }
 
@@ -41,7 +42,8 @@ public class RecipeResponse extends RecipeHeaderResponse{
                 recipeModel.getDescription(),
                 recipeModel.getImageUrl(),
                 recipeModel.getPrice(),
-                recipeModel.getDifficulty()
+                recipeModel.getDifficulty(),
+                recipeModel.getId()
         );
     }
 

@@ -3,6 +3,12 @@ import './App.css';
 import { getProfile } from './features/auth/authSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from './app/store';
+import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
+import MyRecipesPage from './pages/myrecipes/MyRecipesPage';
+import HomePage from './pages/home/HomePage';
+import { Button, Form, FormControl, Nav, Navbar } from 'react-bootstrap';
+import RecipesNavbar from './components/RecipesNavbar';
+import RecipePage from './pages/recipe/RecipePage';
 
 /*
 todo:
@@ -11,6 +17,7 @@ todo:
   3. Add router inside this component + navbar
   4. My recipes navbar option and components for it
  */
+
 
 
 function App() {
@@ -23,8 +30,21 @@ function App() {
   }, []);
 
   return profile ? (
-    <div className='App'>
-      Main app for authenticated user: {profile.email}
+    <div>
+        <RecipesNavbar />
+        <div style={{padding: '20px'}}>
+          <Route exact path='/app/my-recipes'>
+            <MyRecipesPage />
+          </Route>
+          <Route exact path='/app/my-recipes/:id'>
+            <RecipePage />
+          </Route>
+          <Route path='/app/home'>
+            <HomePage />
+          </Route>
+
+        </div>
+
     </div>
   ) : <div>Loading...</div>;
 }
