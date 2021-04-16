@@ -34,7 +34,7 @@ public class RecipeController {
         return recipeService.getUserRecipes(full);
     }
 
-    @PatchMapping("/{id}")
+    @PutMapping("/{id}")
     public RecipeResponse updateRecipe(@PathVariable Long id,
                                              @RequestBody RecipeRequest recipeRequest){
         RecipeModel model = recipeService.updateRecipe(id, recipeRequest);

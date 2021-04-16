@@ -13,7 +13,6 @@ public class RecipeRequest {
     private RecipeModel.Price price;
     private RecipeModel.Difficulty difficulty;
     private int timeRequired;
-
     private List<ProductRecipeRequest> products;
 
     public static RecipeModel fromRecipeRequest(RecipeRequest request) {

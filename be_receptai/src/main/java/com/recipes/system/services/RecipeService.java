@@ -85,7 +85,15 @@ public class RecipeService {
 
         checkIfOwner(user, recipe);
 
-        recipeModelMapper.updateRecipeFromDto(recipeRequest, recipe);
+//        recipeModelMapper.updateRecipeFromDto(recipeRequest, recipe);
+        //todo: fix recipeModelMapper, somewhy not working
+        recipe.setTitle(recipeRequest.getTitle());
+        recipe.setDescription(recipeRequest.getDescription());
+        recipe.setPrice(recipeRequest.getPrice());
+        recipe.setDifficulty(recipeRequest.getDifficulty());
+        recipe.setImageUrl(recipeRequest.getImageUrl());
+        recipe.setTimeRequired(recipeRequest.getTimeRequired());
+
         return recipeRepository.save(recipe);
     }
 
