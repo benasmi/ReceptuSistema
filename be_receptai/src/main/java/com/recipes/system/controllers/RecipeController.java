@@ -47,7 +47,7 @@ public class RecipeController {
         recipeService.addProducts(id, products);
     }
 
-    @DeleteMapping("/{id}/products")
+    @PostMapping("/{id}/products/delete")
     public void removeProducts(@PathVariable Long id,
                             @RequestBody List<Long> productsIds){
         recipeService.removeProducts(id, productsIds);

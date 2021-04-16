@@ -136,7 +136,9 @@ public class RecipeService {
         RecipeModel recipe = getRecipeById(id);
 
         checkIfOwner(user, recipe);
-        productsIds.forEach(recipe::deleteProduct);
 
+
+        productsIds.forEach(recipe::deleteProduct);
+        recipeRepository.save(recipe);
     }
 }

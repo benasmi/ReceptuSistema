@@ -4,11 +4,12 @@ import {
   useHistory
 } from 'react-router-dom';
 import { IRecipe } from '../../components/RecipeCard';
-import { getRecipe } from '../../api/recipesApi';
+import { addRecipeProducts, deleteRecipeProducts, getRecipe } from '../../api/recipesApi';
 import { AxiosError } from 'axios';
 import { deleteRecipe as deleteRecipeRequest, updateRecipe as updateRecipeRequest } from '../../api/recipesApi';
 import { Button } from 'react-bootstrap';
 import { getProducts } from '../../api/productsApi';
+import RecipeProduct from '../../components/RecipeProduct';
 
 const recipeInitial: IFullRecipe = {
   id: -1,
@@ -49,19 +50,14 @@ export default function RecipePage() {
 
   const [quantityProduct, setQuantityProduct] = useState({ productId: -1, quantityType: '', quantity: '', name:'' });
 
+  const [newProducts, setNewProducts] = useState<IProduct[]>([]);
+  const [removedProducts, setRemovedProducts] = useState<number[]>([]);
 
   useEffect(() => {
-    //todo: use Promise all
-    getRecipe(id).then((data: IFullRecipe) => {
-      setRecipe(data);
-    }).catch((err: AxiosError<Error>) => {
-      console.log('Error');
-    });
-
-    getProducts().then((data: IAvailableProduct[]) => {
-      setAvailableProducts(data);
-    });
-
+    Promise.all([getRecipe(id), getProducts()]).then(([data, products])=>{
+      setRecipe(data as IFullRecipe)
+      setAvailableProducts(products as IAvailableProduct[])
+    })
   }, [id]);
 
 
@@ -76,13 +72,18 @@ export default function RecipePage() {
 
   function updateRecipe() {
     if (recipe) {
-      updateRecipeRequest(id, { ...recipe }).then(() => {
-        //Show success toast
-      }).catch((err: AxiosError<Error>) => {
-        //Display toast
-      });
+      Promise.all([
+        updateRecipeRequest(id, { ...recipe }),
+        addRecipeProducts(id, newProducts),
+        deleteRecipeProducts(id, removedProducts)
+      ]).then(()=>{
+        //show success
+      }).catch((err:AxiosError<Error>)=>{
+        //show error
+      })
     }
   }
+
 
   function updateFields(id: string, value: string | number) {
     setRecipe(oldVal => {
@@ -94,51 +95,54 @@ export default function RecipePage() {
   }
 
   function deleteProduct(id: number) {
-
+    if(newProducts.some(it=>it.id===id)){
+      setNewProducts(newProducts.filter(it=>it.id!==id))
+    }else{
+      setRemovedProducts([...removedProducts, id])
+      setRecipe(oldRecipe=>{
+        return {
+          ...oldRecipe,
+          products: oldRecipe.products.filter(it=>it.id!==id)
+        }
+      })
+    }
   }
 
   function displayProducts() {
-    if (recipe?.products.length === 0) {
+    if (recipe?.products.length  === 0 && newProducts.length === 0) {
       return <div>
         Currently no products assigned
       </div>;
     }
-    console.log(recipe.products)
-    return recipe?.products.map((product) => {
-      return <div style={{ display: 'flex', flexDirection: 'row', padding: '4px' }}>
-        <div>
-          {product.name}
-        </div>
-        <div style={{marginLeft: 8}}>
-          {product.quantityType}/{product.quantity}
-        </div>
-        <Button onClick={() => deleteProduct(product.id!!)} style={{marginLeft: 8}}>
-          <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' className='bi bi-x-square'
-               viewBox='0 0 16 16'>
-            <path
-              d='M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z' />
-            <path
-              d='M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z' />
-          </svg>
-        </Button>
-      </div>;
-    });
+
+    return <div>
+      {
+        recipe.products.map(product=>{
+          return <RecipeProduct product={product} onDelete={deleteProduct}/>
+        })
+      }
+      {
+        newProducts.map((product, idx) =>{
+          return <div style={{background: 'grey'}}>
+            <RecipeProduct key={`product@${idx}`} product={product} onDelete={deleteProduct}/>
+          </div>
+        })
+      }
+    </div>
   }
 
   function addProductToRecipe() {
     const {name, quantity, quantityType, productId} = quantityProduct
-    setRecipe(oldVal => {
-      return {
-        ...oldVal,
-        products: [...oldVal.products, {name, quantity, quantityType, id: productId}]
-      };
-    });
+    const newProd = {name, quantity, quantityType, productId}
+
+    setNewProducts([...newProducts, newProd])
   }
 
   useEffect(()=>{
-    console.log(recipe)
-  }, [recipe])
+    console.log("new prods", newProducts)
+  },[newProducts])
 
+  //todo: move to other component
   function ProductsRecipe(){
     return (
       <>
@@ -258,9 +262,9 @@ export default function RecipePage() {
           </p>
           <ProductsRecipe />
         </div>
-
       </form>
       <div>
+        {recipe?.id === -1 && <button type='button' className='btn btn-primary' onClick={()=>{}}>Insert</button>}
         {recipe?.id && <button type='button' className='btn btn-primary' onClick={updateRecipe}>Update</button>}
         {recipe?.id && <button type='button' className='btn btn-danger' onClick={deleteRecipe}>Delete</button>}
       </div>

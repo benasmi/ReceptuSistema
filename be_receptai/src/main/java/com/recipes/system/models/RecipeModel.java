@@ -44,12 +44,7 @@ public class RecipeModel {
     }
 
     public void deleteProduct(Long id){
-        for(ProductRecipeModel model: productRecipeList){
-            if(id.equals(model.getProduct().getId())){
-                model.setProduct(null);
-                model.setRecipe(null);
-            }
-        }
+        productRecipeList.removeIf(model -> id.equals(model.getProductRecipeModelId().getProduct_id()));
     }
 
     public void removeAllProducts(){
