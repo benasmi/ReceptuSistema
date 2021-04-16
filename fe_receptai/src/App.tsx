@@ -30,7 +30,7 @@ function App() {
   }, []);
 
   return profile ? (
-    <div>
+    <div style={{display: 'flex', flexDirection: 'column'}}>
         <RecipesNavbar />
         <div style={{padding: '20px'}}>
           <Route exact path='/app/my-recipes'>
@@ -42,9 +42,7 @@ function App() {
           <Route path='/app/home'>
             <HomePage />
           </Route>
-
         </div>
-
     </div>
   ) : <div>Loading...</div>;
 }
