@@ -3,7 +3,6 @@ import RecipeCard, { IRecipe } from '../../components/RecipeCard';
 import { getMyRecipes } from '../../api/recipesApi';
 import { Button, Col, Container, Row } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
-import { AxiosResponse } from 'axios';
 
 export default function MyRecipesPage() {
   const history = useHistory();
@@ -12,7 +11,7 @@ export default function MyRecipesPage() {
 
   useEffect(() => {
     getMyRecipes()
-      .then((res: AxiosResponse) => setRecipes(res.data))
+      .then((data: IRecipe[]) => setRecipes(data))
       .catch(() => {});
   }, []);
 
