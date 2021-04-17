@@ -1,34 +1,32 @@
 import React, { useEffect, useState } from 'react';
-import RecipeCard, { IRecipe, IRecipeCard } from '../../components/RecipeCard';
+import RecipeCard, { IRecipe } from '../../components/RecipeCard';
 import { getMyRecipes } from '../../api/recipesApi';
-import { AxiosError } from 'axios';
-import { useHistory } from "react-router-dom";
-
+import { Col, Container, Row } from 'react-bootstrap';
 
 export default function MyRecipesPage() {
-
   const [recipes, setRecipes] = useState<IRecipe[]>([]);
-  const history = useHistory();
 
   useEffect(() => {
-    getMyRecipes().then((data: IRecipe[]) => {
-      setRecipes(data);
-    }).catch((err: AxiosError<Error>) => {
-
-    });
+    getMyRecipes()
+      .then((data: IRecipe[]) => setRecipes(data))
+      .catch(() => {});
   }, []);
 
-  function editRecipe(id: number){
-    history.push(`/app/my-recipes/${id}`)
-  }
-
   return (
-    <div>
-      {
-        recipes.map(recipe => {
-          return <RecipeCard recipe={recipe} editRecipe={editRecipe} />;
-        })
-      }
-    </div>
+    <Container>
+      <Row>
+        {recipes.length === 0 && (
+          <Col>
+            <p className="h3 text-center">You haven't created any recipes</p>
+          </Col>
+        )}
+
+        {recipes.map((recipe) => (
+          <Col key={recipe.id} xs="6" className="pb-4">
+            <RecipeCard recipe={recipe} />
+          </Col>
+        ))}
+      </Row>
+    </Container>
   );
-};
+}
