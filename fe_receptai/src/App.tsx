@@ -33,15 +33,17 @@ function App() {
     <div style={{display: 'flex', flexDirection: 'column'}}>
         <RecipesNavbar />
         <div style={{padding: '20px'}}>
-          <Route exact path='/app/my-recipes'>
-            <MyRecipesPage />
-          </Route>
-          <Route exact path='/app/my-recipes/:id'>
-            <RecipePage />
-          </Route>
-          <Route path='/app/home'>
-            <HomePage />
-          </Route>
+          <Switch>
+            <Route exact path='/app/my-recipes'>
+              <MyRecipesPage />
+            </Route>
+            <Route exact path='/app/recipe/:id?'>
+              <RecipePage />
+            </Route>
+            <Route path='/app/home'>
+              <HomePage />
+            </Route>
+          </Switch>
         </div>
     </div>
   ) : <div>Loading...</div>;
