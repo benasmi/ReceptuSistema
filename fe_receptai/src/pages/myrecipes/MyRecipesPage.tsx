@@ -3,6 +3,7 @@ import RecipeCard, { IRecipe, IRecipeCard } from '../../components/RecipeCard';
 import { getMyRecipes } from '../../api/recipesApi';
 import { AxiosError } from 'axios';
 import { useHistory } from "react-router-dom";
+import { Button } from 'react-bootstrap';
 
 
 export default function MyRecipesPage() {
@@ -19,11 +20,16 @@ export default function MyRecipesPage() {
   }, []);
 
   function editRecipe(id: number){
-    history.push(`/app/my-recipes/${id}`)
+    history.push(`/app/my-recipes/${id}`);
+  }
+
+  function addNewRecipe(): void {
+    history.push('/app/my-recipes/-1');
   }
 
   return (
     <div>
+      <Button variant='primary' onClick={addNewRecipe}>Add new</Button>
       {
         recipes.map(recipe => {
           return <RecipeCard recipe={recipe} editRecipe={editRecipe} />;

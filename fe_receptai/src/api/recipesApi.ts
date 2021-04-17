@@ -14,3 +14,4 @@ export const deleteRecipeProducts = (id: number, ids: number[]) => postRequest({
   path: `/recipe/${id}/products/delete`,
   payload: ids
 });
+export const addRecipe = (payload: IFullRecipe) => postRequest({ path: `/recipe/`, payload})
