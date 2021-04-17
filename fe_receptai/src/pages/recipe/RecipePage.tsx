@@ -7,8 +7,8 @@ import { IRecipe } from '../../components/RecipeCard';
 import { addRecipeProducts, deleteRecipeProducts, getRecipe } from '../../api/recipesApi';
 import { AxiosError } from 'axios';
 import { deleteRecipe as deleteRecipeRequest, updateRecipe as updateRecipeRequest } from '../../api/recipesApi';
-import { Button } from 'react-bootstrap';
 import { getProducts } from '../../api/productsApi';
+import ProductsRecipe from './ProductsRecipe';
 import RecipeProduct from '../../components/RecipeProduct';
 import { toast } from 'react-toastify';
 
@@ -40,16 +40,12 @@ export interface IAvailableProduct {
   id: number;
 }
 
-const quantities = ['sp', 'g', 'kg', 'l', 'ml'];
-
 export default function RecipePage() {
   let { id } = useParams();
   const history = useHistory();
 
   const [recipe, setRecipe] = useState<IFullRecipe>(recipeInitial);
   const [availableProducts, setAvailableProducts] = useState<IAvailableProduct[]>([]);
-
-  const [quantityProduct, setQuantityProduct] = useState({ productId: -1, quantityType: '', quantity: '', name:'' });
 
   const [newProducts, setNewProducts] = useState<IProduct[]>([]);
   const [removedProducts, setRemovedProducts] = useState<number[]>([]);
@@ -95,113 +91,10 @@ export default function RecipePage() {
     });
   }
 
-  function deleteProduct(id: number) {
-    if(newProducts.some(it=>it.id===id)){
-      setNewProducts(newProducts.filter(it=>it.id!==id))
-    }else{
-      setRemovedProducts([...removedProducts, id])
-      setRecipe(oldRecipe=>{
-        return {
-          ...oldRecipe,
-          products: oldRecipe.products.filter(it=>it.id!==id)
-        }
-      })
-    }
-  }
-
-  function displayProducts() {
-    if (recipe?.products.length  === 0 && newProducts.length === 0) {
-      return <div>
-        Currently no products assigned
-      </div>;
-    }
-
-    return <div>
-      {
-        recipe.products.map(product=>{
-          return <RecipeProduct product={product} onDelete={deleteProduct}/>
-        })
-      }
-      {
-        newProducts.map((product, idx) =>{
-          return <div style={{background: 'grey'}}>
-            <RecipeProduct key={`product@${idx}`} product={product} onDelete={deleteProduct}/>
-          </div>
-        })
-      }
-    </div>
-  }
-
-  function addProductToRecipe() {
-    const {name, quantity, quantityType, productId} = quantityProduct
-    const newProd = {name, quantity, quantityType, productId}
-
-    setNewProducts([...newProducts, newProd])
-  }
 
   useEffect(()=>{
     console.log("new prods", newProducts)
   },[newProducts])
-
-  //todo: move to other component
-  function ProductsRecipe(){
-    return (
-      <>
-        {displayProducts()}
-        <div style={{ display: 'flex', flexDirection: 'row' }}>
-          <select className='form-control'
-                  id='product'
-                  value={quantityProduct.productId}
-                  style={{ width: '150px' }}
-                  onChange={(event) => setQuantityProduct(oldVal => {
-                    return {
-                      ...oldVal,
-                      productId: parseInt(event.target.value),
-                      name: availableProducts.filter(row=>row.id==parseInt(event.target.value))[0].name
-                    };
-                  })}
-          >
-            <option value="-1">-</option>
-            {
-              availableProducts.map(row => {
-                return <option value={row.id}>{row.name}</option>;
-              })
-            }
-          </select>
-          <select className='form-control' id='quantityType' value={quantityProduct.quantityType}
-
-                  onChange={(event) => setQuantityProduct(oldVal => {
-                    return {
-                      ...oldVal,
-                      quantityType: event.target.value
-                    };
-                  })}
-                  style={{ width: '150px' }}>
-            <option value=''>-</option>
-            {
-              quantities.map((row: any) => {
-                return <option value={row.name}>{row}</option>;
-              })
-            }
-          </select>
-          <input type='text'
-                 className='form-control'
-                 id='quantity'
-                 style={{width: '150px'}}
-                 placeholder='quantity'
-                 value={quantityProduct.quantity}
-                 onChange={(event) => setQuantityProduct(oldVal => {
-                   return {
-                     ...oldVal,
-                     quantity: event.target.value
-                   };
-                 })}
-          />
-          <Button variant='success' onClick={addProductToRecipe}>Add product</Button>
-        </div>
-      </>
-    )
-  }
 
   return (
     <div>
@@ -261,7 +154,15 @@ export default function RecipePage() {
           <p>
             Products
           </p>
-          <ProductsRecipe />
+          <ProductsRecipe  
+            recipe={recipe}
+            setRecipe={setRecipe}
+            newProducts={newProducts}
+            setNewProducts={setNewProducts}
+            availableProducts={availableProducts}
+            removedProducts={removedProducts}
+            setRemovedProducts={setRemovedProducts}
+          />
         </div>
       </form>
       <div>
