@@ -5,7 +5,7 @@ import { IProduct } from '../pages/recipe/RecipePage';
 
 export interface RecipeProductProps {
   product: IProduct;
-  onDelete: (id: number) => void;
+  onDelete: (id: number | undefined) => void;
 }
 
 
@@ -19,7 +19,7 @@ export default function RecipeProduct({ product, onDelete }: RecipeProductProps)
       <div style={{ marginLeft: 8 }}>
         {product.quantityType}/{product.quantity}
       </div>
-      <Button onClick={() => onDelete(product.id!!)} style={{ marginLeft: 8 }}>
+      <Button onClick={() => onDelete(product?.id)} style={{ marginLeft: 8 }}>
         <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' className='bi bi-x-square'
              viewBox='0 0 16 16'>
           <path
