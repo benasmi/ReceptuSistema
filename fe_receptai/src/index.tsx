@@ -7,19 +7,29 @@ import { Provider } from 'react-redux';
 import * as serviceWorker from './serviceWorker';
 import AuthenticatedRoute from './AuthenticatedRoute';
 import LoginPage from './pages/login/LoginPage';
-import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Redirect,
+  Route,
+  Switch,
+} from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
 
+toast.configure({
+  position: 'bottom-right',
+});
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
       <Router>
         <Switch>
-          <Route path='/login'>
+          <Route path="/login">
             <LoginPage />
           </Route>
-          <AuthenticatedRoute path='/app'>
+          <AuthenticatedRoute path="/app">
             <App />
           </AuthenticatedRoute>
           <Redirect to={'/app'} />
