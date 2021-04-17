@@ -8,6 +8,7 @@ import MyRecipesPage from './pages/myrecipes/MyRecipesPage';
 import HomePage from './pages/home/HomePage';
 import RecipesNavbar from './components/RecipesNavbar';
 import RecipePage from './pages/recipe/RecipePage';
+import Recipe from "./pages/recipe/Recipe";
 
 /*
 todo:
@@ -32,9 +33,15 @@ function App() {
         <Route exact path="/app/my-recipes">
           <MyRecipesPage />
         </Route>
+
         <Route exact path="/app/my-recipes/:id">
+          <Recipe />
+        </Route>
+
+        <Route exact path="/app/my-recipes/:id/edit">
           <RecipePage />
         </Route>
+
         <Route path="/app/home">
           <HomePage />
         </Route>
