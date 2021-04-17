@@ -38,7 +38,7 @@ public class RecipeService {
         recipeModel.setUser(user);
 
         request.getProducts().forEach(it -> {
-            ProductModel product = productRepository.findById(it.getProductId()).orElseThrow(()->{
+            ProductModel product = productRepository.findById(it.getId()).orElseThrow(()->{
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Product does not exists");
             });
 
@@ -117,7 +117,7 @@ public class RecipeService {
 
         List<ProductModel> productModels = productRepository.findByIdIn(
                 products.stream()
-                        .map(ProductRecipeRequest::getProductId)
+                        .map(ProductRecipeRequest::getId)
                         .collect(Collectors.toList())
         );
 

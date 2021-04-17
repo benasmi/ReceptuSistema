@@ -36,7 +36,7 @@ function App() {
           <Route exact path='/app/my-recipes'>
             <MyRecipesPage />
           </Route>
-          <Route exact path='/app/my-recipes/:id'>
+          <Route exact path='/app/recipe/:id?'>
             <RecipePage />
           </Route>
           <Route path='/app/home'>

@@ -4,5 +4,5 @@ import lombok.Data;
 
 @Data
 public class ProductRecipeRequest extends QuantityRequest {
-    private Long productId;
+    private Long id;
 }

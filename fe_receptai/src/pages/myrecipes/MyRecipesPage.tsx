@@ -20,11 +20,11 @@ export default function MyRecipesPage() {
   }, []);
 
   function editRecipe(id: number){
-    history.push(`/app/my-recipes/${id}`);
+    history.push(`/app/recipe/${id}`);
   }
 
   function addNewRecipe(): void {
-    history.push('/app/my-recipes/-1');
+    history.push('/app/recipe/');
   }
 
   return (

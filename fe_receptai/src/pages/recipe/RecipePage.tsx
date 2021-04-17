@@ -4,7 +4,7 @@ import {
   useHistory
 } from 'react-router-dom';
 import { IRecipe } from '../../components/RecipeCard';
-import { addRecipeProducts, deleteRecipeProducts, getRecipe } from '../../api/recipesApi';
+import { addRecipe, addRecipeProducts, deleteRecipeProducts, getRecipe } from '../../api/recipesApi';
 import { AxiosError } from 'axios';
 import { deleteRecipe as deleteRecipeRequest, updateRecipe as updateRecipeRequest } from '../../api/recipesApi';
 import { getProducts } from '../../api/productsApi';
@@ -50,9 +50,13 @@ export default function RecipePage() {
   const [removedProducts, setRemovedProducts] = useState<number[]>([]);
 
   useEffect(() => {
-    Promise.all([getRecipe(id), getProducts()]).then(([data, products])=>{
-      setRecipe(data as IFullRecipe)
-      setAvailableProducts(products as IAvailableProduct[])
+    if(id){
+      getRecipe(id).then((recipe: IFullRecipe) =>{
+        setRecipe(recipe)
+      })
+    }
+    getProducts().then((products: IAvailableProduct[])=>{
+      setAvailableProducts(products)
     })
   }, [id]);
 
@@ -80,6 +84,14 @@ export default function RecipePage() {
     }
   }
 
+  function insertRecipe(){
+    addRecipe({...recipe, products: [...newProducts]}).then(()=>{
+      toast.success('Recipe added successfully')
+      history.push('/app/my-recipes');
+    }).catch(()=>{
+      toast.error("Failed to add")
+    })
+  }
 
   function updateFields(id: string, value: string | number) {
     setRecipe(oldVal => {
@@ -89,11 +101,6 @@ export default function RecipePage() {
       };
     });
   }
-
-
-  useEffect(()=>{
-    console.log("new prods", newProducts)
-  },[newProducts])
 
   return (
     <div>
@@ -165,7 +172,7 @@ export default function RecipePage() {
         </div>
       </form>
       <div>
-        {recipe?.id === -1 && <button type='button' className='btn btn-primary' onClick={()=>{}}>Insert</button>}
+        {recipe?.id === -1 && <button type='button' className='btn btn-primary' onClick={insertRecipe}>Insert</button>}
         {recipe?.id && <button type='button' className='btn btn-primary' onClick={updateRecipe}>Update</button>}
         {recipe?.id && <button type='button' className='btn btn-danger' onClick={deleteRecipe}>Delete</button>}
       </div>
