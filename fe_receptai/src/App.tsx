@@ -3,10 +3,9 @@ import './App.css';
 import { getProfile } from './features/auth/authSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from './app/store';
-import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 import MyRecipesPage from './pages/myrecipes/MyRecipesPage';
 import HomePage from './pages/home/HomePage';
-import { Button, Form, FormControl, Nav, Navbar } from 'react-bootstrap';
 import RecipesNavbar from './components/RecipesNavbar';
 import RecipePage from './pages/recipe/RecipePage';
 
@@ -18,33 +17,32 @@ todo:
   4. My recipes navbar option and components for it
  */
 
-
-
 function App() {
-
   const { profile } = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(getProfile());
-  }, []);
+  }, [dispatch]);
 
   return profile ? (
-    <div style={{display: 'flex', flexDirection: 'column'}}>
-        <RecipesNavbar />
-        <div style={{padding: '20px'}}>
-          <Route exact path='/app/my-recipes'>
-            <MyRecipesPage />
-          </Route>
-          <Route exact path='/app/my-recipes/:id'>
-            <RecipePage />
-          </Route>
-          <Route path='/app/home'>
-            <HomePage />
-          </Route>
-        </div>
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <RecipesNavbar />
+      <div style={{ padding: '20px' }}>
+        <Route exact path="/app/my-recipes">
+          <MyRecipesPage />
+        </Route>
+        <Route exact path="/app/my-recipes/:id">
+          <RecipePage />
+        </Route>
+        <Route path="/app/home">
+          <HomePage />
+        </Route>
+      </div>
     </div>
-  ) : <div>Loading...</div>;
+  ) : (
+    <div>Loading...</div>
+  );
 }
 
 export default App;

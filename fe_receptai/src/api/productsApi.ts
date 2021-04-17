@@ -1,3 +1,3 @@
-import { getRequest, IGetRequest } from '../networking/network';
+import { getRequest } from '../networking/network';
 
-export const getProducts = () => getRequest({path: '/products'});
+export const getProducts = () => getRequest({ path: '/products' });

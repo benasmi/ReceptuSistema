@@ -3,6 +3,7 @@ import RecipeCard, { IRecipe } from '../../components/RecipeCard';
 import { getMyRecipes } from '../../api/recipesApi';
 import { Button, Col, Container, Row } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
+import { AxiosResponse } from 'axios';
 
 export default function MyRecipesPage() {
   const history = useHistory();
@@ -11,7 +12,7 @@ export default function MyRecipesPage() {
 
   useEffect(() => {
     getMyRecipes()
-      .then((data: IRecipe[]) => setRecipes(data))
+      .then((res: AxiosResponse) => setRecipes(res.data))
       .catch(() => {});
   }, []);
 
@@ -22,9 +23,6 @@ export default function MyRecipesPage() {
   return (
     <Container>
       <Row>
-        <Button variant="primary" onClick={addNewRecipe}>
-          Add new
-        </Button>
         {recipes.length === 0 && (
           <Col>
             <p className="h3 text-center">You haven't created any recipes</p>
@@ -36,6 +34,14 @@ export default function MyRecipesPage() {
             <RecipeCard recipe={recipe} />
           </Col>
         ))}
+      </Row>
+
+      <Row className="m-3 text-center">
+        <Col>
+          <Button variant="primary" onClick={addNewRecipe}>
+            Add new
+          </Button>
+        </Col>
       </Row>
     </Container>
   );

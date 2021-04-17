@@ -22,7 +22,9 @@ export default function RecipeCard({ recipe }: RecipeCardProps) {
   const [showModal, setShowModal] = useState(false);
 
   const handleDelete = () => {
-    deleteRecipe(recipe.id);
+    deleteRecipe(recipe.id)
+        .then(() => console.log('success'))
+        .catch(() => console.log('error'));
     setShowModal(false);
     // TODO use a better reload mechanism
     window.location.reload();
