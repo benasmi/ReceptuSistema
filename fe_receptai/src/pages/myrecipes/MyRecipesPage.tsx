@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import RecipeCard, { IRecipe } from '../../components/RecipeCard';
-import { getMyRecipes } from '../../api/recipesApi';
+import {
+  deleteRecipe as betterDeleteRecipe,
+  getMyRecipes,
+} from '../../api/recipesApi';
 import { Button, Col, Container, Row } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 export default function MyRecipesPage() {
   const history = useHistory();
@@ -16,7 +20,18 @@ export default function MyRecipesPage() {
   }, []);
 
   const addNewRecipe = () => {
-    history.push('/app/my-recipes/-1');
+    history.push('/app/recipe');
+  };
+
+  const editRecipe = (id: number) => {
+    history.push(`/app/recipe/${id}`);
+  };
+
+  const deleteRecipe = (id: number) => {
+    setRecipes(recipes.filter((i) => i.id !== id));
+    betterDeleteRecipe(id)
+      .then(() => toast.success('Successfully deleted'))
+      .catch(() => toast.error('Failed to delete'));
   };
 
   return (
@@ -30,7 +45,11 @@ export default function MyRecipesPage() {
 
         {recipes.map((recipe) => (
           <Col key={recipe.id} xs="6" className="pb-4">
-            <RecipeCard recipe={recipe} />
+            <RecipeCard
+              recipe={recipe}
+              onEdit={() => editRecipe(recipe.id)}
+              onDelete={() => deleteRecipe(recipe.id)}
+            />
           </Col>
         ))}
       </Row>
