@@ -8,7 +8,7 @@ import { Button, Col, Container, Row } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-export default function MyRecipesPage() {
+export default function UserRecipeList() {
   const history = useHistory();
 
   const [recipes, setRecipes] = useState<IRecipe[]>([]);

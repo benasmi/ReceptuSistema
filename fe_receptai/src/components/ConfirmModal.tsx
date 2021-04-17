@@ -8,7 +8,7 @@ type ModalProps = {
   setShow: Function;
 };
 
-const Modal = ({ message, onConfirm, show, setShow }: ModalProps) => {
+const ConfirmModal = ({ message, onConfirm, show, setShow }: ModalProps) => {
   return (
     <ModalBS show={show} onHide={() => setShow(false)} centered>
       <ModalBS.Header>
@@ -27,4 +27,4 @@ const Modal = ({ message, onConfirm, show, setShow }: ModalProps) => {
   );
 };
 
-export default Modal;
+export default ConfirmModal;

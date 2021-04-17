@@ -1,6 +1,6 @@
 import { Button } from 'react-bootstrap';
 import React from 'react';
-import { IProduct } from '../pages/recipe/RecipePage';
+import { IProduct } from '../pages/recipe/RecipeForm';
 
 
 export interface RecipeProductProps {

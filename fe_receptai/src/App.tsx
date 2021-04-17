@@ -4,11 +4,11 @@ import { getProfile } from './features/auth/authSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from './app/store';
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
-import MyRecipesPage from './pages/myrecipes/MyRecipesPage';
+import UserRecipeList from './pages/myrecipes/UserRecipeList';
 import HomePage from './pages/home/HomePage';
 import { Button, Form, FormControl, Nav, Navbar } from 'react-bootstrap';
 import RecipesNavbar from './components/RecipesNavbar';
-import RecipePage from './pages/recipe/RecipePage';
+import RecipeForm from './pages/recipe/RecipeForm';
 
 /*
 todo:
@@ -34,10 +34,10 @@ function App() {
         <RecipesNavbar />
         <div style={{padding: '20px'}}>
           <Route exact path='/app/my-recipes'>
-            <MyRecipesPage />
+            <UserRecipeList />
           </Route>
           <Route exact path='/app/recipe/:id?'>
-            <RecipePage />
+            <RecipeForm />
           </Route>
           <Route path='/app/home'>
             <HomePage />

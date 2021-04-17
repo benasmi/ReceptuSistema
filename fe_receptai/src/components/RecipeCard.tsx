@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button, Card, Col, Row } from 'react-bootstrap';
 import './styles.css';
 import { Pencil, Trash } from 'react-bootstrap-icons';
-import Modal from './Modal';
+import ConfirmModal from './ConfirmModal';
 
 export interface IRecipe {
   id: number;
@@ -26,7 +26,7 @@ export default function RecipeCard({
 
   return (
     <>
-      <Modal
+      <ConfirmModal
         message={`Do you want to delete "${recipe.title}"?`}
         onConfirm={onDelete}
         show={showModal}

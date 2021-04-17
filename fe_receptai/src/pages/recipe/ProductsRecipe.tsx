@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Button } from 'react-bootstrap';
 import RecipeProduct from '../../components/RecipeProduct';
-import { IAvailableProduct, IFullRecipe, IProduct } from './RecipePage';
+import { IAvailableProduct, IFullRecipe, IProduct } from './RecipeForm';
 
 export interface IProductsRecipe {
     recipe: IFullRecipe,

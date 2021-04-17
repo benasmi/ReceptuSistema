@@ -41,7 +41,7 @@ export interface IAvailableProduct {
   id: number;
 }
 
-export default function RecipePage() {
+export default function RecipeForm() {
   let { id } = useParams();
   const history = useHistory();
 
