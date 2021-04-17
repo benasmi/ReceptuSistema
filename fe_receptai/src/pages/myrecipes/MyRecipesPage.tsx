@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import RecipeCard, { IRecipe } from '../../components/RecipeCard';
 import { getMyRecipes } from '../../api/recipesApi';
-import { Col, Container, Row } from 'react-bootstrap';
+import { Button, Col, Container, Row } from 'react-bootstrap';
+import { useHistory } from 'react-router-dom';
 
 export default function MyRecipesPage() {
+  const history = useHistory();
+
   const [recipes, setRecipes] = useState<IRecipe[]>([]);
 
   useEffect(() => {
@@ -12,9 +15,16 @@ export default function MyRecipesPage() {
       .catch(() => {});
   }, []);
 
+  const addNewRecipe = () => {
+    history.push('/app/my-recipes/-1');
+  };
+
   return (
     <Container>
       <Row>
+        <Button variant="primary" onClick={addNewRecipe}>
+          Add new
+        </Button>
         {recipes.length === 0 && (
           <Col>
             <p className="h3 text-center">You haven't created any recipes</p>
