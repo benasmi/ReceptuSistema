@@ -1,40 +1,47 @@
 import React, { useEffect, useState } from 'react';
-import RecipeCard, { IRecipe, IRecipeCard } from '../../components/RecipeCard';
+import RecipeCard, { IRecipe } from '../../components/RecipeCard';
 import { getMyRecipes } from '../../api/recipesApi';
-import { AxiosError } from 'axios';
-import { useHistory } from "react-router-dom";
-import { Button } from 'react-bootstrap';
-
+import { Button, Col, Container, Row } from 'react-bootstrap';
+import { useHistory } from 'react-router-dom';
 
 export default function MyRecipesPage() {
-
-  const [recipes, setRecipes] = useState<IRecipe[]>([]);
   const history = useHistory();
 
-  useEffect(() => {
-    getMyRecipes().then((data: IRecipe[]) => {
-      setRecipes(data);
-    }).catch((err: AxiosError<Error>) => {
+  const [recipes, setRecipes] = useState<IRecipe[]>([]);
 
-    });
+  useEffect(() => {
+    getMyRecipes()
+      .then((data: IRecipe[]) => setRecipes(data))
+      .catch(() => {});
   }, []);
 
-  function editRecipe(id: number){
-    history.push(`/app/recipe/${id}`);
-  }
-
-  function addNewRecipe(): void {
-    history.push('/app/recipe/');
-  }
+  const addNewRecipe = () => {
+    history.push('/app/my-recipes/-1');
+  };
 
   return (
-    <div>
-      <Button variant='primary' onClick={addNewRecipe}>Add new</Button>
-      {
-        recipes.map(recipe => {
-          return <RecipeCard recipe={recipe} editRecipe={editRecipe} />;
-        })
-      }
-    </div>
+    <Container>
+      <Row>
+        {recipes.length === 0 && (
+          <Col>
+            <p className="h3 text-center">You haven't created any recipes</p>
+          </Col>
+        )}
+
+        {recipes.map((recipe) => (
+          <Col key={recipe.id} xs="6" className="pb-4">
+            <RecipeCard recipe={recipe} />
+          </Col>
+        ))}
+      </Row>
+
+      <Row className="m-3 text-center">
+        <Col>
+          <Button variant="primary" onClick={addNewRecipe}>
+            Add new
+          </Button>
+        </Col>
+      </Row>
+    </Container>
   );
-};
+}

@@ -1,0 +1,9 @@
+.card-image {
+  height: 150px;
+  object-fit: cover;
+}
+
+.icon {
+  position: relative;
+  top: -3px;
+}
