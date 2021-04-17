@@ -10,6 +10,7 @@ import { deleteRecipe as deleteRecipeRequest, updateRecipe as updateRecipeReques
 import { Button } from 'react-bootstrap';
 import { getProducts } from '../../api/productsApi';
 import RecipeProduct from '../../components/RecipeProduct';
+import { toast } from 'react-toastify';
 
 const recipeInitial: IFullRecipe = {
   id: -1,
@@ -66,7 +67,7 @@ export default function RecipePage() {
     deleteRecipeRequest(id).then(() => {
       history.push('/app/my-recipes');
     }).catch((err: AxiosError<Error>) => {
-      //Display toast
+      toast.error('Failed to save');
     });
   }
 
@@ -77,9 +78,9 @@ export default function RecipePage() {
         addRecipeProducts(id, newProducts),
         deleteRecipeProducts(id, removedProducts)
       ]).then(()=>{
-        //show success
+        toast.success('Successfully updated');
       }).catch((err:AxiosError<Error>)=>{
-        //show error
+        toast.error('Failed to update');
       })
     }
   }
