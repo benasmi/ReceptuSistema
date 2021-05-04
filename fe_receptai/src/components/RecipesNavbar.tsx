@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Nav, Navbar } from 'react-bootstrap';
 
 export default function RecipesNavbar() {
@@ -9,6 +9,7 @@ export default function RecipesNavbar() {
         <Nav className="mr-auto">
           <Nav.Link href="/app/home">Home</Nav.Link>
           <Nav.Link href="/app/my-recipes">My recipes</Nav.Link>
+          <Nav.Link href="/app/profile">Profile</Nav.Link>
         </Nav>
       </Navbar>
     </div>
