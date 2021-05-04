@@ -9,6 +9,7 @@ import HomePage from './pages/home/HomePage';
 import { Button, Form, FormControl, Nav, Navbar } from 'react-bootstrap';
 import RecipesNavbar from './components/RecipesNavbar';
 import RecipeForm from './pages/recipe/RecipeForm';
+import EditProfile from './pages/profile/EditProfile';
 
 /*
 todo:
@@ -41,6 +42,9 @@ function App() {
           </Route>
           <Route path='/app/home'>
             <HomePage />
+          </Route>
+          <Route path='/app/profile'>
+            <EditProfile />
           </Route>
         </div>
     </div>
