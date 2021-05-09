@@ -39,7 +39,7 @@ export default function RegisterPage() {
     }
 
     if (tokenStored() || isAuthenticated) {
-        return <Redirect to='/app' />;
+        return <Redirect to='/app/home' />;
     }
 
     return (

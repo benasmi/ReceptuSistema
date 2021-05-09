@@ -19,6 +19,11 @@ public class RecipeController {
         this.recipeService = recipeService;
     }
 
+    @GetMapping("/")
+    public List<RecipeResponse> getRecipes(@RequestParam(name = "full", defaultValue = "false") boolean full) {
+        return recipeService.getRecipes(full);
+    }
+
     @PostMapping("/")
     public void addRecipe(@RequestBody RecipeRequest recipeRequest){
         recipeService.addRecipe(recipeRequest);
