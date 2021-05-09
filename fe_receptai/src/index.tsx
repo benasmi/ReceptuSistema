@@ -16,6 +16,7 @@ import {
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-toastify/dist/ReactToastify.css';
 import { toast } from 'react-toastify';
+import RegisterPage from './pages/register/RegisterPage';
 
 toast.configure({
   position: 'bottom-right',
@@ -28,6 +29,9 @@ ReactDOM.render(
         <Switch>
           <Route path="/login">
             <LoginPage />
+          </Route>
+          <Route path='/register'>
+            <RegisterPage />
           </Route>
           <AuthenticatedRoute path="/app">
             <App />
