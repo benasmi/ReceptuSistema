@@ -4,6 +4,7 @@ import { ILoginRequest } from '../../pages/login/LoginPage';
 import { loginRequest, userProfileRequest } from '../../api/authApi';
 import { AxiosError } from 'axios';
 import { setCookie } from '../../utils';
+import { toast } from 'react-toastify';
 
 interface IProfile {
   id: number;
@@ -49,6 +50,7 @@ export const login = (loginData: ILoginRequest): AppThunk => dispatch => {
     setCookie('jwt', jwtResponse.jwtToken);
     dispatch(authenticate());
   }).catch((err: AxiosError<Error>) => {
+    toast.error('Invalid email or password.')
   });
 };
 
