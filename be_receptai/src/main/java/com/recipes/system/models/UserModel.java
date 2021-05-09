@@ -4,6 +4,7 @@ package com.recipes.system.models;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -28,6 +29,8 @@ public class UserModel {
     @Column(name = "is_admin")
     private boolean isAdmin;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserAllergenModel> userAllergens = new ArrayList<>();
 
     public void addRecipe(RecipeModel recipeModel){
         userRecipes.add(recipeModel);
@@ -45,4 +48,12 @@ public class UserModel {
     public UserModel() {
     }
 
+    public void deleteAllergen(Long allergen_id) {
+        userAllergens.removeIf(model -> model.getAllergene().getId().equals(allergen_id));
+    }
+
+    public void addUserAllergen(AllergenModel allergen) {
+        UserAllergenModel userAllergen = new UserAllergenModel(this, allergen);
+        userAllergens.add(userAllergen);
+    }
 }
