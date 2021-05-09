@@ -35,12 +35,12 @@ export default function LoginPage() {
     <Container className='d-flex h-100'>
       <Row className='align-self-center w-100 mt-5'>
         <Col className='mx-auto'>
-            <Form.Group controlId='credentialField'>
+            <Form.Group controlId='email'>
               <Form.Label>Email address</Form.Label>
               <Form.Control as='input' type='email' placeholder='Enter email' name='email' value={loginConfig.email} onChange={handleChange}>
               </Form.Control>
             </Form.Group>
-            <Form.Group controlId='credentialField'>
+            <Form.Group controlId='password'>
               <Form.Label>Password</Form.Label>
               <Form.Control as='input' type='password'  placeholder='Enter password' name='password' value={loginConfig.password} onChange={handleChange}>
               </Form.Control>
