@@ -1,5 +1,4 @@
 import { deleteRequest, getRequest, postRequest, putRequest } from '../networking/network';
-import { IRecipe } from '../components/RecipeCard';
 import { IFullRecipe, IProduct } from '../pages/recipe/RecipeForm';
 
 export const getMyRecipes = () => getRequest({ path: '/recipe/user' });
@@ -15,3 +14,4 @@ export const deleteRecipeProducts = (id: number, ids: number[]) => postRequest({
   payload: ids
 });
 export const addRecipe = (payload: IFullRecipe) => postRequest({ path: `/recipe/`, payload})
+export const getRecipes = (full: boolean = false) => getRequest({ path: `/recipe/` })

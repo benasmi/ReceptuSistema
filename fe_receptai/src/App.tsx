@@ -10,6 +10,7 @@ import { Button, Form, FormControl, Nav, Navbar } from 'react-bootstrap';
 import RecipesNavbar from './components/RecipesNavbar';
 import RecipeForm from './pages/recipe/RecipeForm';
 import EditProfile from './pages/profile/EditProfile';
+import RecipeView from './pages/recipe/RecipeView';
 
 /*
 todo:
@@ -34,10 +35,13 @@ function App() {
     <div style={{display: 'flex', flexDirection: 'column'}}>
         <RecipesNavbar />
         <div style={{padding: '20px'}}>
+          <Route exact path='/app/recipe/:id?'>
+            <RecipeView />
+          </Route>
           <Route exact path='/app/my-recipes'>
             <UserRecipeList />
           </Route>
-          <Route exact path='/app/recipe/:id?'>
+          <Route exact path='/app/recipe/edit/:id?'>
             <RecipeForm />
           </Route>
           <Route path='/app/home'>

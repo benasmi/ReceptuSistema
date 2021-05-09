@@ -28,7 +28,7 @@ export default function LoginPage() {
   }
 
   if (tokenStored() || isAuthenticated) {
-    return <Redirect to='/app' />;
+    return <Redirect to='/app/home' />;
   }
 
   return (

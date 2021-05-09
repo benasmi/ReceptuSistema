@@ -24,7 +24,7 @@ export default function UserRecipeList() {
   };
 
   const editRecipe = (id: number) => {
-    history.push(`/app/recipe/${id}`);
+    history.push(`/app/recipe/edit/${id}`);
   };
 
   const deleteRecipe = (id: number) => {
