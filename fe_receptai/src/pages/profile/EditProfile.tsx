@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Spinner } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../app/store';
 
@@ -8,7 +9,7 @@ export default function EditProfile() {
     const [name, setName] = useState(profile?.name)
     const [email, setEmail] = useState(profile?.email)
 
-    return (
+    return profile ? (
         <div className="d-flex justify-content-center">
             <form>
                 <div className="form-group">
@@ -43,5 +44,5 @@ export default function EditProfile() {
                 </div>
             </form>
         </div>
-    );
+    ) : <Spinner animation="border" />;
 };

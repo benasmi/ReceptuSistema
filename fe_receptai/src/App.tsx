@@ -6,10 +6,11 @@ import { RootState } from './app/store';
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 import UserRecipeList from './pages/myrecipes/UserRecipeList';
 import HomePage from './pages/home/HomePage';
-import { Button, Form, FormControl, Nav, Navbar } from 'react-bootstrap';
 import RecipesNavbar from './components/RecipesNavbar';
 import RecipeForm from './pages/recipe/RecipeForm';
+import Profile from './pages/profile/Profile';
 import EditProfile from './pages/profile/EditProfile';
+import { Spinner } from 'react-bootstrap';
 
 /*
 todo:
@@ -44,11 +45,17 @@ function App() {
             <HomePage />
           </Route>
           <Route path='/app/profile'>
+            <Profile />
+          </Route>
+          <Route path='/app/editProfile'>
+            <EditProfile />
+          </Route>
+          <Route path='/app/editAllergens'>
             <EditProfile />
           </Route>
         </div>
     </div>
-  ) : <div>Loading...</div>;
+  ) : <Spinner animation="border" />;
 }
 
 export default App;
