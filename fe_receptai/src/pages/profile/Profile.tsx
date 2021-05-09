@@ -19,10 +19,6 @@ export default function Profile() {
                 <Card>
                     <Card.Body id='Name'>{profile.name}</Card.Body>
                 </Card>
-                <div>Email</div>
-                <Card>
-                    <Card.Body id='Email'>{profile.email}</Card.Body>
-                </Card>
                 <div>
                     <button
                         type="button"
