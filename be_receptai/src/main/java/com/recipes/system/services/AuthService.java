@@ -36,6 +36,9 @@ public class AuthService {
     }
 
     public void registerUser(UserRequest userRequest){
+        if (checkIfExists(userRequest) == true) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Registration failed");
+        }
         userRepository.save(UserRequest.fromUserRequest(userRequest));
     }
 
@@ -70,6 +73,10 @@ public class AuthService {
         }
 
         return user;
+    }
+
+    private boolean checkIfExists(UserRequest userRequest) {
+        return userRepository.findByEmail(userRequest.getEmail()) != null;
     }
 
 }
