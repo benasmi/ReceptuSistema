@@ -3,22 +3,20 @@ import { Spinner } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../app/store';
 import { updateProfile as updateProfileRequest } from '../../api/profileApi';
-import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { AxiosError } from 'axios';
 
 export default function EditProfile() {
     const { profile } = useSelector((state: RootState) => state.auth);
-    const history = useHistory();
 
     const [name, setName] = useState(profile?.name)
 
     function updateProfile() {
         Promise.all([
-        updateProfileRequest(name as string)
+        updateProfileRequest({name: name})
         ]).then(() => {
             toast.success('Successfully updated');
-            history.push('/app/profile');
+            window.location.href = '/app/profile'
           }).catch((err: AxiosError<Error>) => {
             toast.error(err);
         }

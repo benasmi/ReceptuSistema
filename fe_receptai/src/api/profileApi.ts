@@ -1,3 +1,3 @@
 import { putRequest } from "../networking/network";
 
-export const updateProfile = (payload: string) => putRequest({ path: '/user/editProfile', payload });
+export const updateProfile = (payload: any) => putRequest({ path: '/user/editProfile', payload });
