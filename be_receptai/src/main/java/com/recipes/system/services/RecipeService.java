@@ -7,12 +7,18 @@ import com.recipes.system.models.RecipeModel;
 import com.recipes.system.models.UserModel;
 import com.recipes.system.repository.ProductRepository;
 import com.recipes.system.repository.RecipeRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.swing.text.html.Option;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -151,5 +157,24 @@ public class RecipeService {
 
         productsIds.forEach(recipe::deleteProduct);
         recipeRepository.save(recipe);
+    }
+
+    public RecipePage getRecipePage(int page, int size, Optional<RecipeModel.Difficulty> difficulty, Optional<RecipeModel.Price> price) {
+        Pageable paging = PageRequest.of(page, size);
+        Specification<RecipeModel> spec = Specification
+                .where(RecipeFilters.difficultyEquals(difficulty))
+                .and(RecipeFilters.priceEquals(price));
+        Page<RecipeModel> recipeModelsPage = recipeRepository.findAll(spec, paging);
+        List<RecipeResponse> recipes = recipeModelsPage
+                .getContent()
+                .stream()
+                .map(RecipeResponse::headerFromRecipeProducts)
+                .collect(Collectors.toList());
+
+        return new RecipePage(recipes,
+                recipeModelsPage.getNumber(),
+                recipeModelsPage.getTotalElements(),
+                recipeModelsPage.getTotalPages()
+        );
     }
 }
