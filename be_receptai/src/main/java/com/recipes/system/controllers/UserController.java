@@ -1,5 +1,7 @@
 package com.recipes.system.controllers;
 
+import com.recipes.system.contracts.EditProfileRequest;
+import com.recipes.system.contracts.RecipeRequest;
 import com.recipes.system.contracts.UserResponse;
 import com.recipes.system.services.UserService;
 import org.springframework.web.bind.annotation.*;
@@ -20,4 +22,8 @@ public class UserController {
         return userService.getProfile();
     }
 
+    @PutMapping("/editProfile")
+    public void updateProfile(@RequestBody EditProfileRequest editProfileRequest){
+        userService.updateUser(editProfileRequest);
+    }
 }
