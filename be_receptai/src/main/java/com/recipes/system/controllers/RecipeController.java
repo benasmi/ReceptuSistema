@@ -1,6 +1,7 @@
 package com.recipes.system.controllers;
 
 import com.recipes.system.contracts.ProductRecipeRequest;
+import com.recipes.system.contracts.RecipePage;
 import com.recipes.system.contracts.RecipeRequest;
 import com.recipes.system.contracts.RecipeResponse;
 import com.recipes.system.models.RecipeModel;
@@ -8,6 +9,7 @@ import com.recipes.system.services.RecipeService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/recipe")
@@ -61,5 +63,14 @@ public class RecipeController {
     @DeleteMapping("/{id}")
     public void deleteRecipe(@PathVariable Long id){
         recipeService.deleteRecipe(id);
+    }
+
+    @GetMapping("")
+    public RecipePage getRecipePage(
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "2") int size,
+            @RequestParam(name = "difficulty") Optional<RecipeModel.Difficulty> difficulty,
+            @RequestParam(name = "price") Optional<RecipeModel.Price> price) {
+        return recipeService.getRecipePage(page, size, difficulty, price);
     }
 }

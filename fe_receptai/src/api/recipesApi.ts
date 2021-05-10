@@ -1,3 +1,4 @@
+import { IFilterProps, IPagingProps } from '../components/RecipeList';
 import { deleteRequest, getRequest, postRequest, putRequest } from '../networking/network';
 import { IFullRecipe, IProduct } from '../pages/recipe/RecipeForm';
 
@@ -15,3 +16,5 @@ export const deleteRecipeProducts = (id: number, ids: number[]) => postRequest({
 });
 export const addRecipe = (payload: IFullRecipe) => postRequest({ path: `/recipe/`, payload})
 export const getRecipes = (full: boolean = false) => getRequest({ path: `/recipe/` })
+export const getRecipePage = (pagingProps: IPagingProps, filterProps: IFilterProps | undefined) => 
+  getRequest({ path: `/recipe?page=${pagingProps.page}&size=${pagingProps.size}&price=${filterProps?.price}&difficulty=${filterProps?.difficulty}`})
