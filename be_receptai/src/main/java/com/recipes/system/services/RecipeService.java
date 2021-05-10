@@ -31,6 +31,17 @@ public class RecipeService {
         this.recipeModelMapper = recipeModelMapper;
     }
 
+    public List<RecipeResponse> getRecipes(boolean full) {
+        List<RecipeModel> userRecipes = recipeRepository.findAll();
+        List<RecipeResponse> recipes;
+
+        recipes = userRecipes.stream()
+                .map(full ? RecipeResponse::fromRecipeProducts : RecipeResponse::headerFromRecipeProducts)
+                .collect(Collectors.toList());
+
+        return recipes;
+    }
+
     public void addRecipe(RecipeRequest request){
         UserModel user = authService.getCurrentUser();
 

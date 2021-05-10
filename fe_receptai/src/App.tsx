@@ -11,6 +11,7 @@ import RecipeForm from './pages/recipe/RecipeForm';
 import Profile from './pages/profile/Profile';
 import EditProfile from './pages/profile/EditProfile';
 import { Spinner } from 'react-bootstrap';
+import RecipeView from './pages/recipe/RecipeView';
 
 /*
 todo:
@@ -35,10 +36,13 @@ function App() {
     <div style={{display: 'flex', flexDirection: 'column'}}>
         <RecipesNavbar />
         <div style={{padding: '20px'}}>
+          <Route exact path='/app/recipe/:id?'>
+            <RecipeView />
+          </Route>
           <Route exact path='/app/my-recipes'>
             <UserRecipeList />
           </Route>
-          <Route exact path='/app/recipe/:id?'>
+          <Route exact path='/app/recipe/edit/:id?'>
             <RecipeForm />
           </Route>
           <Route path='/app/home'>

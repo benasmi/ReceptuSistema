@@ -1,9 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppThunk } from '../../app/store';
 import { ILoginRequest } from '../../pages/login/LoginPage';
-import { loginRequest, userProfileRequest } from '../../api/authApi';
+import { loginRequest, signUpRequest, userProfileRequest } from '../../api/authApi';
 import { AxiosError } from 'axios';
 import { setCookie } from '../../utils';
+import { toast } from 'react-toastify';
+import { IRegisterRequest } from '../../pages/register/RegisterPage';
 
 interface IProfile {
   id: number;
@@ -49,6 +51,7 @@ export const login = (loginData: ILoginRequest): AppThunk => dispatch => {
     setCookie('jwt', jwtResponse.jwtToken);
     dispatch(authenticate());
   }).catch((err: AxiosError<Error>) => {
+    toast.error('Invalid email or password.')
   });
 };
 
@@ -61,5 +64,17 @@ export const getProfile = (): AppThunk => dispatch => {
     dispatch(setProfile(null))
   });
 };
+
+export const signUp = (registerData: IRegisterRequest): AppThunk => dispatch => {
+  signUpRequest(registerData).then(() => {
+    const loginData: ILoginRequest = {
+      email: registerData.email,
+      password: registerData.password
+    };
+    dispatch(login(loginData));
+  }).catch((err: AxiosError<Error>) => {
+    toast.error('Registration Failed');
+  })
+} 
 
 export default authSlice.reducer;
