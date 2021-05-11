@@ -3,7 +3,7 @@ import './App.css';
 import { getProfile } from './features/auth/authSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from './app/store';
-import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 import UserRecipeList from './pages/myrecipes/UserRecipeList';
 import HomePage from './pages/home/HomePage';
 import RecipesNavbar from './components/RecipesNavbar';
@@ -12,6 +12,7 @@ import Profile from './pages/profile/Profile';
 import EditProfile from './pages/profile/EditProfile';
 import { Spinner } from 'react-bootstrap';
 import RecipeView from './pages/recipe/RecipeView';
+import EditAllergens from './pages/profile/EditAllergens';
 
 /*
 todo:
@@ -55,7 +56,7 @@ function App() {
             <EditProfile />
           </Route>
           <Route path='/app/editAllergens'>
-            <EditProfile />
+            <EditAllergens />
           </Route>
         </div>
     </div>

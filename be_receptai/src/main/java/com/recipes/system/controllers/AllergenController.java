@@ -16,9 +16,14 @@ public class AllergenController {
         this.allergenService = allergenService;
     }
 
+    @GetMapping(path="/")
+    public List<AllergenResponse> getAllergens() {
+        return allergenService.getAllergens();
+    }
+
     @GetMapping(path = "/user/")
-    public List<AllergenResponse> getUserAllergens(@RequestParam(name = "full", defaultValue = "false") boolean full) {
-        return allergenService.getUserAllergens(full);
+    public List<AllergenResponse> getUserAllergens() {
+        return allergenService.getUserAllergens();
     }
 
     @PostMapping(path = "/user/")

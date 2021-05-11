@@ -26,7 +26,15 @@ public class AllergenService {
         this.userRepository = userRepository;
     }
 
-    public List<AllergenResponse> getUserAllergens(boolean full) {
+    public List<AllergenResponse> getAllergens() {
+        List<AllergenModel> allergenModels = allergenRepository.findAll();
+        return allergenModels.
+                stream()
+                .map(AllergenResponse::fromAllergenModel)
+                .collect(Collectors.toList());
+    }
+
+    public List<AllergenResponse> getUserAllergens() {
         UserModel user = authService.getCurrentUser();
         List<AllergenModel> allergenModels = user.getUserAllergens()
                 .stream()
