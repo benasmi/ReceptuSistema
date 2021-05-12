@@ -1,9 +1,12 @@
-import React, { ChangeEvent, useEffect, useState } from 'react'
+import { Formik } from 'formik';
+import React, { useEffect, useState } from 'react'
 import { Button, Col, Container, Form, Row, Table } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import { getAllergens } from '../../api/allergensApi';
-import { addUserAllergen, deleteUserAllergen, getUserAllergens } from '../../api/profileApi';
-import ConfirmModal from '../../components/ConfirmModal';
+import { addUserAllergen, getUserAllergens } from '../../api/profileApi';
+import AllergenItem from '../../components/AllergenItem';
+import * as Yup from 'yup';
+import { useHistory } from 'react-router';
 
 export interface IAllergen {
     id?: number;
@@ -14,7 +17,9 @@ export interface IAllergen {
 export default function EditAllergens() {
     const [userAllergens, setUserAllergens] = useState<IAllergen[]>([]);
     const [allergens, setAllergens] = useState<IAllergen[]>([]);
+    const [filteredAllergens, setFilteredAllergens] = useState<IAllergen[]>([])
     const [modalOpen, setModalOpen] = useState<boolean>(false);
+    const history = useHistory();
 
     useEffect(() => {
         getUserAllergens()
@@ -25,24 +30,20 @@ export default function EditAllergens() {
             .catch(() => console.log('error'));
     }, [])
 
-    function filterAllergens(allergens: IAllergen[], userAllergens: IAllergen[]): IAllergen[] {
-        return allergens.filter((allergen) => !userAllergens.map(al => al.id).includes(allergen.id))
-    }
-    
-    const [newAllergen, setNewAllergen] = useState<IAllergen>();
+    useEffect(() => {
+        setFilteredAllergens(allergens.filter((allergen) => !userAllergens.map(al => al.id).includes(allergen.id)));
+    }, [userAllergens, allergens])
 
-    const disabledButton: boolean = newAllergen?.name == null || newAllergen.intensity == null || newAllergen.name === "" || newAllergen.intensity === "";
-
-    function handleChange(e: ChangeEvent<any>) {
-        const values = (e.target.value as string).split(":");
-        setNewAllergen(oldVal => ({ ...oldVal, id: values[0]as unknown as number, name: values[1]}))
-
-    }
-
-    function addAllergen() {
-        addUserAllergen(newAllergen!)
+    function addAllergen(name: string, intensity: string) {
+        const values = name.split(":");
+        const allergen: IAllergen = {
+            id: values[0] as unknown as number,
+            name: values[1],
+            intensity: intensity
+        }
+        addUserAllergen(allergen)
             .then(() => {
-                setUserAllergens(oldVal => ([...oldVal, newAllergen!]));
+                setUserAllergens(oldVal => ([...oldVal, allergen]));
                 toast.success('Allergen added');
             })
             .catch(() => {
@@ -50,19 +51,20 @@ export default function EditAllergens() {
             })
     }
 
+    const validationSchema = Yup.object().shape({
+        name: Yup.string().min(1).required(),
+        intensity: Yup.string().min(1).required()
+    })
+
     return (
         <>
-        {/* <ConfirmModal 
-            message="Do you want to delete this allergen?"
-            onConfirm={() => deleteAllergen()}
-            show={modalOpen}
-            setShow={setModalOpen}/> */}
         <Container>
-            <Row className="mb-5">
+            <Row className="mb-3">
                 <Col>
                 <h1 className='text-center'>Allergens</h1>
                 </Col>
             </Row>
+            <Button variant="link" onClick={() => history.push('/app/profile')}>Go Back</Button>
             <Row>
                 <Col>
                     <Table striped hover>
@@ -75,45 +77,60 @@ export default function EditAllergens() {
                         </thead>
                         <tbody>
                             {userAllergens.map((allergen) => (
-                                <tr key={allergen.id}>
-                                    <td>{allergen.name}</td>
-                                    <td>{allergen.intensity}</td>
-                                    <td>
-                                        <Button variant="primary">Edit</Button>{' '}
-                                        <Button variant="danger">Delete</Button>
-                                    </td>
-                                </tr>
+                                <AllergenItem 
+                                    key={allergen.id}
+                                    allergen={allergen} 
+                                    modalOpen={modalOpen} 
+                                    setModalOpen={setModalOpen} 
+                                    setUserAllergens={setUserAllergens} 
+                                />
                             ))}
                         </tbody>
                     </Table>
-                    <hr />
-                    <Form.Row>
-                        <Col>
-                            <Form.Group>
-                                <Form.Label>Allergens</Form.Label>
-                                <Form.Control as="select" defaultValue="" onChange={handleChange}>
-                                    <option value=""></option>
-                                    {filterAllergens(allergens, userAllergens).map((allergen) => (
-                                        <option key={allergen.id} value={`${allergen.id}:${allergen.name}`}>{allergen.name}</option>
-                                    ))}
-                                </Form.Control>
-                            </Form.Group>
-                        </Col>
-                        <Col>
-                            <Form.Group>
-                                <Form.Label>Intensity</Form.Label>
-                                <Form.Control as="select" defaultValue="" onChange={(e) => setNewAllergen(oldVal => ({...oldVal, intensity: e.target.value}))}>
-                                    <option value="" ></option>
-                                    <option value="weak">weak</option>
-                                    <option value="high">high</option>
-                                </Form.Control>
-                            </Form.Group>
-                        </Col>
-                    </Form.Row>
-                    
-                    <Button variant="success" disabled={disabledButton} onClick={addAllergen}>Add New</Button>
                 </Col>
             </Row>
+                <hr />
+                <Formik
+                    initialValues={{name: "", intensity: ""}}
+                    validationSchema={validationSchema}
+                    onSubmit={(values, {setSubmitting, resetForm }) => {
+                        setSubmitting(true)
+                        addAllergen(values.name, values.intensity);
+                        resetForm();
+                        setSubmitting(false);
+                    }}
+                >
+                    {({ values, handleSubmit, handleChange, isSubmitting}) => {
+                        return (
+                            <Form>
+                                <Form.Row>
+                                    <Col>
+                                        <Form.Group>
+                                            <Form.Label>Allergens</Form.Label>
+                                            <Form.Control as="select" value={values.name} name="name" onChange={handleChange}>
+                                                <option value=""></option>
+                                                {filteredAllergens.map((allergen) => (
+                                                    <option key={allergen.id} value={`${allergen.id}:${allergen.name}`}>{allergen.name}</option>
+                                                ))}
+                                            </Form.Control>
+                                        </Form.Group>
+                                    </Col>
+                                    <Col>
+                                        <Form.Group>
+                                            <Form.Label>Intensity</Form.Label>
+                                            <Form.Control as="select" value={values.intensity} name="intensity" onChange={handleChange}>
+                                                <option value=""></option>
+                                                <option value="weak">weak</option>
+                                                <option value="high">high</option>
+                                            </Form.Control>
+                                        </Form.Group>
+                                    </Col>
+                                </Form.Row>
+                                <Button variant="success" disabled={values.name === "" || values.intensity === ""  || isSubmitting} onClick={() => handleSubmit()}>Add New</Button>
+                            </Form>
+                        )
+                    }}
+                </Formik>
         </Container>
         </>
     )
