@@ -1,5 +1,6 @@
 package com.recipes.system.services;
 
+import com.recipes.system.contracts.EditAllergenRequest;
 import com.recipes.system.contracts.UserAllergenRequest;
 import com.recipes.system.contracts.AllergenResponse;
 import com.recipes.system.models.AllergenModel;
@@ -26,7 +27,15 @@ public class AllergenService {
         this.userRepository = userRepository;
     }
 
-    public List<AllergenResponse> getUserAllergens(boolean full) {
+    public List<AllergenResponse> getAllergens() {
+        List<AllergenModel> allergenModels = allergenRepository.findAll();
+        return allergenModels.
+                stream()
+                .map(AllergenResponse::fromAllergenModel)
+                .collect(Collectors.toList());
+    }
+
+    public List<AllergenResponse> getUserAllergens() {
         UserModel user = authService.getCurrentUser();
         List<AllergenModel> allergenModels = user.getUserAllergens()
                 .stream()
@@ -48,12 +57,20 @@ public class AllergenService {
         userRepository.save(user);
     }
 
-    public void deleteUserAllergen(Long allergen_id) {
+    public void deleteUserAllergen(Long allergenId) {
         UserModel user = authService.getCurrentUser();
-        if (user.getUserAllergens().stream().anyMatch(x -> x.getAllergene().getId() == allergen_id) == false) {
+        if (user.getUserAllergens().stream().anyMatch(x -> x.getAllergene().getId() == allergenId) == false) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Allergen does not exist");
         }
-        user.deleteAllergen(allergen_id);
+        user.deleteAllergen(allergenId);
         userRepository.save(user);
+    }
+
+    public void editUserAllergen(Long allergenId, EditAllergenRequest editItem) {
+        AllergenModel allergen = allergenRepository.findById(allergenId).orElseThrow(() -> {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Allergen does not exist");
+        });
+        allergen.setIntensity(editItem.getIntensity());
+        allergenRepository.save(allergen);
     }
 }

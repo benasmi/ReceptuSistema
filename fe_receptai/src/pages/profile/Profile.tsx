@@ -31,7 +31,7 @@ export default function Profile() {
                     <button
                         type="button"
                         className="btn btn-primary"
-                        onClick={undefined}>
+                        onClick={() => history.push('/app/editAllergens')}>
                         Edit allergens
                     </button>
                 </div>
