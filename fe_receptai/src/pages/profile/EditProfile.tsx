@@ -4,7 +4,6 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../app/store';
 import { updateProfile as updateProfileRequest } from '../../api/profileApi';
 import { toast } from 'react-toastify';
-import { AxiosError } from 'axios';
 
 export default function EditProfile() {
     const { profile } = useSelector((state: RootState) => state.auth);
@@ -17,8 +16,8 @@ export default function EditProfile() {
         ]).then(() => {
             toast.success('Successfully updated');
             window.location.href = '/app/profile'
-          }).catch((err: AxiosError<Error>) => {
-            toast.error(err);
+          }).catch(() => {
+            toast.error("Name cannot contain numbers");
         }
         );
     }
