@@ -22,7 +22,7 @@ export default function Profile() {
                 <div>
                     <button
                         type="button"
-                        className="btn btn-primary my-2"
+                        className="btn btn-primary my-1"
                         onClick={edit}>
                         Edit Profile
                     </button>
@@ -30,9 +30,17 @@ export default function Profile() {
                 <div>
                     <button
                         type="button"
-                        className="btn btn-primary"
+                        className="btn btn-primary my-1"
                         onClick={() => history.push('/app/editAllergens')}>
                         Edit allergens
+                    </button>
+                </div>
+                <div>
+                    <button
+                        type="button"
+                        className="btn btn-primary my-1"
+                        onClick={() => history.push('/app/editProducts')}>
+                        Edit my products
                     </button>
                 </div>
                 </div>

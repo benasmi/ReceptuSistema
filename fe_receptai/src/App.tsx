@@ -13,6 +13,7 @@ import EditProfile from './pages/profile/EditProfile';
 import { Spinner } from 'react-bootstrap';
 import RecipeView from './pages/recipe/RecipeView';
 import EditAllergens from './pages/profile/EditAllergens';
+import EditProducts from './pages/profile/EditProducts';
 
 /*
 todo:
@@ -57,6 +58,9 @@ function App() {
           </Route>
           <Route path='/app/editAllergens'>
             <EditAllergens />
+          </Route>
+          <Route path='/app/editProducts'>
+            <EditProducts />
           </Route>
         </div>
     </div>
