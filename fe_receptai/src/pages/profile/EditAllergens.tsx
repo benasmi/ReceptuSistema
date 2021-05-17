@@ -43,7 +43,7 @@ export default function EditAllergens() {
         }
         addUserAllergen(allergen)
             .then(() => {
-                setUserAllergens(oldVal => ([...oldVal, allergen]));
+                setUserAllergens([...userAllergens, allergen]);
                 toast.success('Allergen added');
             })
             .catch(() => {
@@ -98,6 +98,7 @@ export default function EditAllergens() {
                         addAllergen(values.name, values.intensity);
                         resetForm();
                         setSubmitting(false);
+                        window.location.reload();
                     }}
                 >
                     {({ values, handleSubmit, handleChange, isSubmitting}) => {
