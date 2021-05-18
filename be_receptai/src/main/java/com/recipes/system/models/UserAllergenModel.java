@@ -18,9 +18,11 @@ public class UserAllergenModel {
     @MapsId("allergene_id")
     private AllergenModel allergene;
 
-    public UserAllergenModel(UserModel user, AllergenModel allergene) {
+    private AllergenModel.Intensity intensity;
+    public UserAllergenModel(UserModel user, AllergenModel allergen, AllergenModel.Intensity intensity) {
         this.user = user;
-        this.allergene = allergene;
+        this.allergene = allergen;
+        this.intensity = intensity;
     }
 
     public UserAllergenModel() {

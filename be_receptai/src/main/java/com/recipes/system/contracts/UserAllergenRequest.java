@@ -10,6 +10,6 @@ public class UserAllergenRequest {
     private AllergenModel.Intensity intensity;
 
     public static AllergenModel fromAllergenRequest(UserAllergenRequest request) {
-        return new AllergenModel(request.id, request.name, request.intensity);
+        return new AllergenModel(request.id, request.name);
     }
 }

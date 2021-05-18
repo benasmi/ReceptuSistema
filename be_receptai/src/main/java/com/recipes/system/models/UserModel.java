@@ -2,6 +2,8 @@ package com.recipes.system.models;
 
 
 import lombok.Data;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -52,8 +54,20 @@ public class UserModel {
         userAllergens.removeIf(model -> model.getAllergene().getId().equals(allergen_id));
     }
 
-    public void addUserAllergen(AllergenModel allergen) {
-        UserAllergenModel userAllergen = new UserAllergenModel(this, allergen);
+    public void addUserAllergen(AllergenModel allergen, AllergenModel.Intensity intensity) {
+        UserAllergenModel userAllergen = new UserAllergenModel(this, allergen, intensity);
         userAllergens.add(userAllergen);
+    }
+
+    public void editUserallergen(AllergenModel allergen, AllergenModel.Intensity intensity) {
+        userAllergens
+                .stream()
+                .filter(x -> x.getAllergene().getId() == allergen.getId())
+                .findFirst()
+                .orElseThrow(() -> {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Allergen does not exist");
+                })
+                .setIntensity(intensity);
+
     }
 }

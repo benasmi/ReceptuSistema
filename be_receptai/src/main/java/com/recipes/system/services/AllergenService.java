@@ -3,6 +3,7 @@ package com.recipes.system.services;
 import com.recipes.system.contracts.EditAllergenRequest;
 import com.recipes.system.contracts.UserAllergenRequest;
 import com.recipes.system.contracts.AllergenResponse;
+import com.recipes.system.contracts.UserAllergenResponse;
 import com.recipes.system.models.AllergenModel;
 import com.recipes.system.models.UserAllergenModel;
 import com.recipes.system.models.UserModel;
@@ -35,15 +36,13 @@ public class AllergenService {
                 .collect(Collectors.toList());
     }
 
-    public List<AllergenResponse> getUserAllergens() {
+    public List<UserAllergenResponse> getUserAllergens() {
         UserModel user = authService.getCurrentUser();
-        List<AllergenModel> allergenModels = user.getUserAllergens()
-                .stream()
-                .filter(x -> x.getUser().getId() == user.getId())
-                .map(UserAllergenModel::getAllergene)
-                .collect(Collectors.toList());
-        List<AllergenResponse> allergens = allergenModels.stream()
-                .map(AllergenResponse::fromAllergenModel).collect(Collectors.toList());
+
+        List<UserAllergenResponse> allergens = user.getUserAllergens().stream()
+                .map(x -> UserAllergenResponse
+                        .fromAllergenModel(x.getAllergene().getId(), x.getAllergene().getName(), x.getIntensity()))
+                        .collect(Collectors.toList());
         return allergens;
     }
 
@@ -53,7 +52,7 @@ public class AllergenService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Allergen does not exist");
         }
         AllergenModel allergenModel = UserAllergenRequest.fromAllergenRequest(request);
-        user.addUserAllergen(allergenModel);
+        user.addUserAllergen(allergenModel, request.getIntensity());
         userRepository.save(user);
     }
 
@@ -70,7 +69,8 @@ public class AllergenService {
         AllergenModel allergen = allergenRepository.findById(allergenId).orElseThrow(() -> {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Allergen does not exist");
         });
-        allergen.setIntensity(editItem.getIntensity());
-        allergenRepository.save(allergen);
+        UserModel user = authService.getCurrentUser();
+        user.editUserallergen(allergen, editItem.getIntensity());
+        userRepository.save(user);
     }
 }

@@ -14,19 +14,17 @@ import java.util.Set;
 @Table(name = "allergene")
 public class AllergenModel implements Serializable {
 
-    public AllergenModel(String name, Intensity intensity) {
+    public AllergenModel(String name) {
         this.name = name;
-        this.intensity = intensity;
     }
 
     public AllergenModel() {
 
     }
 
-    public AllergenModel(Long id, String name, Intensity intensity) {
+    public AllergenModel(Long id, String name) {
         this.id = id;
         this.name = name;
-        this.intensity = intensity;
     }
 
     public enum Intensity { weak, high };
@@ -36,9 +34,6 @@ public class AllergenModel implements Serializable {
     private Long id;
 
     private String name;
-
-    @Enumerated(EnumType.STRING)
-    private Intensity intensity;
 
     @OneToMany(mappedBy = "allergene", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserAllergenModel> allergeneUsers = new ArrayList<>();
