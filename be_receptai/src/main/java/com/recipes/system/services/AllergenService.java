@@ -48,10 +48,9 @@ public class AllergenService {
 
     public void addUserAllergen(UserAllergenRequest request){
         UserModel user = authService.getCurrentUser();
-        if (allergenRepository.existsById(request.getId()) == false) {
+        AllergenModel allergenModel = allergenRepository.findById(request.getId()).orElseThrow(() -> {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Allergen does not exist");
-        }
-        AllergenModel allergenModel = UserAllergenRequest.fromAllergenRequest(request);
+        });
         user.addUserAllergen(allergenModel, request.getIntensity());
         userRepository.save(user);
     }

@@ -43,7 +43,6 @@ public class AllergenController {
 
     @PutMapping(path = "/user/{id}")
     public void editUserAllergen(@PathVariable Long id, @RequestBody EditAllergenRequest editItem) {
-
         allergenService.editUserAllergen(id, editItem);
     }
 

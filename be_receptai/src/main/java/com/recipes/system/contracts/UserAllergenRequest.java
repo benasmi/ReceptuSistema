@@ -8,8 +8,4 @@ public class UserAllergenRequest {
     private Long id;
     private String name;
     private AllergenModel.Intensity intensity;
-
-    public static AllergenModel fromAllergenRequest(UserAllergenRequest request) {
-        return new AllergenModel(request.id, request.name);
-    }
 }

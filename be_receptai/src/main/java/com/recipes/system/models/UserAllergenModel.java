@@ -2,10 +2,11 @@ package com.recipes.system.models;
 
 import lombok.Data;
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Data
 @Entity(name = "user_allergene")
-public class UserAllergenModel {
+public class UserAllergenModel implements Serializable {
 
     @EmbeddedId
     private UserAllergenModelId userAllergenModelId = new UserAllergenModelId();
@@ -18,7 +19,9 @@ public class UserAllergenModel {
     @MapsId("allergene_id")
     private AllergenModel allergene;
 
+    @Enumerated(EnumType.STRING)
     private AllergenModel.Intensity intensity;
+
     public UserAllergenModel(UserModel user, AllergenModel allergen, AllergenModel.Intensity intensity) {
         this.user = user;
         this.allergene = allergen;

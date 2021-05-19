@@ -1,8 +1,12 @@
 package com.recipes.system.contracts;
 
 import com.recipes.system.models.AllergenModel;
+import lombok.Data;
 
-public class UserAllergenResponse {
+import java.io.Serializable;
+
+@Data
+public class UserAllergenResponse implements Serializable {
     private Long id;
     private String name;
     private AllergenModel.Intensity intensity;
