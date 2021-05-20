@@ -31,6 +31,7 @@ export default function EditAllergens() {
     }, [])
 
     useEffect(() => {
+        console.log(userAllergens);
         setFilteredAllergens(allergens.filter((allergen) => !userAllergens.map(al => al.id).includes(allergen.id)));
     }, [userAllergens, allergens])
 

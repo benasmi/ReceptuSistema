@@ -3,6 +3,7 @@ package com.recipes.system.controllers;
 import com.recipes.system.contracts.EditAllergenRequest;
 import com.recipes.system.contracts.UserAllergenRequest;
 import com.recipes.system.contracts.AllergenResponse;
+import com.recipes.system.contracts.UserAllergenResponse;
 import com.recipes.system.models.AllergenModel;
 import com.recipes.system.services.AllergenService;
 import org.springframework.http.HttpStatus;
@@ -26,7 +27,7 @@ public class AllergenController {
     }
 
     @GetMapping(path = "/user/")
-    public List<AllergenResponse> getUserAllergens() {
+    public List<UserAllergenResponse> getUserAllergens() {
         return allergenService.getUserAllergens();
     }
 
@@ -42,7 +43,6 @@ public class AllergenController {
 
     @PutMapping(path = "/user/{id}")
     public void editUserAllergen(@PathVariable Long id, @RequestBody EditAllergenRequest editItem) {
-
         allergenService.editUserAllergen(id, editItem);
     }
 
