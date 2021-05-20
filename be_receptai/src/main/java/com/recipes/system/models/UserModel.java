@@ -34,6 +34,9 @@ public class UserModel {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserAllergenModel> userAllergens = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserProductModel> userProducts = new ArrayList<>();
+
     public void addRecipe(RecipeModel recipeModel){
         userRecipes.add(recipeModel);
     }
