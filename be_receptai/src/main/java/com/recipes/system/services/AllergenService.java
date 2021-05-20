@@ -1,11 +1,10 @@
 package com.recipes.system.services;
 
+import com.recipes.system.contracts.AllergenResponse;
 import com.recipes.system.contracts.EditAllergenRequest;
 import com.recipes.system.contracts.UserAllergenRequest;
-import com.recipes.system.contracts.AllergenResponse;
 import com.recipes.system.contracts.UserAllergenResponse;
 import com.recipes.system.models.AllergenModel;
-import com.recipes.system.models.UserAllergenModel;
 import com.recipes.system.models.UserModel;
 import com.recipes.system.repository.AllergenRepository;
 import com.recipes.system.repository.UserRepository;
