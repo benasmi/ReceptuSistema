@@ -62,6 +62,18 @@ public class UserModel {
         userAllergens.add(userAllergen);
     }
 
+    public void addUserProduct(ProductModel product, int quantity, UserProductModel.Quantity quantityType, Long id) {
+        UserProductModel userProduct = new UserProductModel(this, product, quantity, quantityType);
+        userProduct.setId(id);
+        userProducts.add(userProduct);
+    }
+
+    public void deleteProduct(Long product_id) {
+        userProducts.removeIf(
+                userProduct -> userProduct.getId().equals(product_id)
+        );
+    }
+
     public void editUserallergen(AllergenModel allergen, AllergenModel.Intensity intensity) {
         userAllergens
                 .stream()

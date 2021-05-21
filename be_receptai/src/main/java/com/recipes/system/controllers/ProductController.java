@@ -1,12 +1,8 @@
 package com.recipes.system.controllers;
 
-import com.recipes.system.contracts.ProductResponse;
-import com.recipes.system.contracts.UserAllergenResponse;
-import com.recipes.system.contracts.UserProductResponse;
+import com.recipes.system.contracts.*;
 import com.recipes.system.services.ProductService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -27,4 +23,11 @@ public class ProductController {
     }
     @GetMapping(path = "/user/")
     public List<UserProductResponse> getUserProducts() { return productService.getUserProducts(); }
+    @PostMapping(path = "/user/")
+    public void addUserProduct(@RequestBody UserProductRequest request) { productService.addUserProduct(request); }
+    @DeleteMapping(path = "/user/{id}")
+    public void deleteUserProduct(@PathVariable Long id) {
+        productService.deleteUserProduct(id);
+    }
+
 }
