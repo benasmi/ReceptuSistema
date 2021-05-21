@@ -36,8 +36,7 @@ public class ProductService {
     public List<UserProductResponse> getUserProducts() {
         UserModel user = authService.getCurrentUser();
         List<UserProductResponse> products = user.getUserProducts().stream()
-                .map(x -> UserProductResponse
-                .fromProductModel(x.getProduct().getId(), x.getProduct().getName(), x.getQuantityType(), x.getQuantity()))
+                .map(UserProductResponse::fromProductModel)
                 .collect(Collectors.toList());
         return products;
     }
@@ -47,16 +46,13 @@ public class ProductService {
         ProductModel productModel = productRepository.findById(request.getId()).orElseThrow(() -> {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Product does not exist");
         });
-        user.addUserProduct(productModel, request.getQuantity(), request.getQuantityType());
+        Long lastId = productRepository.getLastId() + 1;
+        user.addUserProduct(productModel, request.getQuantity(), request.getQuantityType(), lastId);
         userRepository.save(user);
     }
 
     public void deleteUserProduct(Long productId) {
-        //kazkodel neveikia teisingai???
         UserModel user = authService.getCurrentUser();
-        if (user.getUserProducts().stream().anyMatch(x -> x.getProduct().getId() == productId) == false) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Product does not exist");
-        }
         user.deleteProduct(productId);
         userRepository.save(user);
     }

@@ -62,14 +62,15 @@ public class UserModel {
         userAllergens.add(userAllergen);
     }
 
-    public void addUserProduct(ProductModel product, int quantity, UserProductModel.Quantity quantityType) {
+    public void addUserProduct(ProductModel product, int quantity, UserProductModel.Quantity quantityType, Long id) {
         UserProductModel userProduct = new UserProductModel(this, product, quantity, quantityType);
+        userProduct.setId(id);
         userProducts.add(userProduct);
     }
 
     public void deleteProduct(Long product_id) {
         userProducts.removeIf(
-                userProduct -> userProduct.getProduct().getId().equals(product_id)
+                userProduct -> userProduct.getId().equals(product_id)
         );
     }
 

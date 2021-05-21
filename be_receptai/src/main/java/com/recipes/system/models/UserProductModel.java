@@ -10,6 +10,7 @@ import javax.persistence.*;
 public class UserProductModel {
     @EmbeddedId
     private UserProductModelId userProductModelId = new UserProductModelId();
+    private Long id;
 
     public static enum Quantity {sp, g, kg, l, ml};
 
@@ -27,6 +28,15 @@ public class UserProductModel {
     private Quantity quantityType;
 
     public UserProductModel(UserModel user, ProductModel product, int quantity, Quantity quantityType) {
+        this.user = user;
+        this.product = product;
+        this.quantity = quantity;
+        this.quantityType = quantityType;
+    }
+
+    public UserProductModel(UserProductModelId userProductModelId, Long id, UserModel user, ProductModel product, int quantity, Quantity quantityType) {
+        this.userProductModelId = userProductModelId;
+        this.id = id;
         this.user = user;
         this.product = product;
         this.quantity = quantity;
