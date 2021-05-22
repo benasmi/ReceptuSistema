@@ -2,11 +2,10 @@ package com.recipes.system.services;
 
 import com.recipes.system.contracts.*;
 import com.recipes.system.mappers.RecipeModelMapper;
-import com.recipes.system.models.ProductModel;
-import com.recipes.system.models.RecipeModel;
-import com.recipes.system.models.UserModel;
+import com.recipes.system.models.*;
 import com.recipes.system.repository.ProductRepository;
 import com.recipes.system.repository.RecipeRepository;
+import org.apache.catalina.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.swing.text.html.Option;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -29,12 +29,24 @@ public class RecipeService {
     private final ProductRepository productRepository;
     private final AuthService authService;
     private final RecipeModelMapper recipeModelMapper;
+    private final ProductService productService;
+    private final UserService userService;
+    private final AllergenService allergenService;
 
-    public RecipeService(RecipeRepository recipeRepository, ProductRepository productRepository, AuthService authService, RecipeModelMapper recipeModelMapper) {
+    public RecipeService(RecipeRepository recipeRepository,
+                         ProductRepository productRepository,
+                         AuthService authService,
+                         RecipeModelMapper recipeModelMapper,
+                         ProductService productService,
+                         UserService userService,
+                         AllergenService allergenService) {
         this.recipeRepository = recipeRepository;
         this.productRepository = productRepository;
         this.authService = authService;
         this.recipeModelMapper = recipeModelMapper;
+        this.productService = productService;
+        this.userService = userService;
+        this.allergenService = allergenService;
     }
 
     public List<RecipeResponse> getRecipes(boolean full) {
@@ -176,5 +188,68 @@ public class RecipeService {
                 recipeModelsPage.getTotalElements(),
                 recipeModelsPage.getTotalPages()
         );
+    }
+
+    public List<RecipeResponse> recommendRecipes() throws InterruptedException {
+        final List<RecipeModel> recipesByUserProducts = filterByUserProducts();
+        final List<RecipeModel> recipesByEatingHabits;
+        final List<RecipeModel> recipesByAllergens;
+        return recipesByUserProducts.stream().map(RecipeResponse::headerFromRecipeProducts).collect(Collectors.toList());
+//        Thread productsThread = new Thread(() -> {
+//            boolean isEmpty = productService.isUserProductsListEmpty();
+//
+//        });
+//        Thread eatingHabitsThread = new Thread(() -> {
+//            boolean isEmpty = userService.isEatingHabitsListEmpty();
+//        });
+//        productsThread.start();
+//
+//        productsThread.join();
+//        return new ArrayList<>();
+    }
+
+    private List<RecipeModel> filterByUserProducts() {
+        UserModel user = authService.getCurrentUser();
+        List<ProductModel> userProducts = user.getUserProducts()
+                .stream()
+                .map(UserProductModel::getProduct)
+                .collect(Collectors.toList());
+        List<RecipeModel> recipes = recipeRepository.findAll();
+        List<RecipeModel> filteredRecipes = recipes
+                .stream()
+                // receptai
+                .filter(x -> userProducts
+                        .stream()
+                        .map(ProductModel::getId)
+                        .collect(Collectors.toList()).containsAll(x.getProductRecipeList()
+                                .stream()
+                                // vieno recepto produktai
+                                .map(y -> y.getProduct().getId())
+                                .collect(Collectors.toList())))
+                .collect(Collectors.toList());
+        return filteredRecipes;
+    }
+
+    private List<RecipeModel> filterByEatingHabits() {
+        UserModel user = authService.getCurrentUser();
+        List<EatingHabitModel> userHabits = user.getUserEatingHabits()
+                .stream()
+                .map(UserEatingHabitModel::getHabit)
+                .collect(Collectors.toList());
+        List<RecipeModel> recipes = recipeRepository.findAll();
+        List<RecipeModel> filteredRecipes = recipes
+                .stream()
+                .filter(r -> userHabits
+                        .stream()
+                        .map(uh -> uh.getProductCategories()
+                            .stream()
+                            .map(pc -> pc.getProductCategory()
+                                .getProducts()
+                                    .stream()
+                                    .map(ProductModel::getId)
+                                    .collect(Collectors.toList()).containsAll(r.getProductRecipeList()
+                                    .stream().map(y -> y.getProduct().getId()).collect(Collectors.toList())))
+                        ).collect(Collectors.toList());
+
     }
 }

@@ -45,6 +45,11 @@ public class ProductService {
         return products;
     }
 
+    public boolean isUserProductsListEmpty() {
+        UserModel user = authService.getCurrentUser();
+        return user.getUserProducts().isEmpty();
+    }
+
     public void addUserProduct(UserProductRequest request){
         UserModel user = authService.getCurrentUser();
         ProductModel productModel = productRepository.findById(request.getId()).orElseThrow(() -> {
