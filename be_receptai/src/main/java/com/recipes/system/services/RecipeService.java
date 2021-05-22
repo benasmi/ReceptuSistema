@@ -5,7 +5,6 @@ import com.recipes.system.mappers.RecipeModelMapper;
 import com.recipes.system.models.*;
 import com.recipes.system.repository.ProductRepository;
 import com.recipes.system.repository.RecipeRepository;
-import org.apache.catalina.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -14,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -60,14 +58,14 @@ public class RecipeService {
         return recipes;
     }
 
-    public void addRecipe(RecipeRequest request){
+    public void addRecipe(RecipeRequest request) {
         UserModel user = authService.getCurrentUser();
 
         RecipeModel recipeModel = RecipeRequest.fromRecipeRequest(request);
         recipeModel.setUser(user);
 
         request.getProducts().forEach(it -> {
-            ProductModel product = productRepository.findById(it.getId()).orElseThrow(()->{
+            ProductModel product = productRepository.findById(it.getId()).orElseThrow(() -> {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Product does not exists");
             });
 
@@ -77,14 +75,14 @@ public class RecipeService {
         recipeRepository.save(recipeModel);
     }
 
-    private RecipeModel getRecipeById(Long id){
-        return recipeRepository.findById(id).orElseThrow(()->{
+    private RecipeModel getRecipeById(Long id) {
+        return recipeRepository.findById(id).orElseThrow(() -> {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Recipe does not exist");
         });
     }
 
-    private void checkIfOwner(UserModel user, RecipeModel recipe){
-        if(!recipe.getUser().getId().equals(user.getId())){
+    private void checkIfOwner(UserModel user, RecipeModel recipe) {
+        if (!recipe.getUser().getId().equals(user.getId())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Only owner can edit his recipe");
         }
     }
@@ -102,8 +100,8 @@ public class RecipeService {
         List<RecipeResponse> recipes;
 
         recipes = userRecipes.stream()
-                    .map(full ? RecipeResponse::fromRecipeProducts : RecipeResponse::headerFromRecipeProducts)
-                    .collect(Collectors.toList());
+                .map(full ? RecipeResponse::fromRecipeProducts : RecipeResponse::headerFromRecipeProducts)
+                .collect(Collectors.toList());
 
         return recipes;
     }
@@ -190,22 +188,43 @@ public class RecipeService {
         );
     }
 
-    public List<RecipeResponse> recommendRecipes() throws InterruptedException {
-        final List<RecipeModel> recipesByUserProducts = filterByUserProducts();
-        final List<RecipeModel> recipesByEatingHabits;
-        final List<RecipeModel> recipesByAllergens;
-        return recipesByUserProducts.stream().map(RecipeResponse::headerFromRecipeProducts).collect(Collectors.toList());
-//        Thread productsThread = new Thread(() -> {
-//            boolean isEmpty = productService.isUserProductsListEmpty();
-//
-//        });
-//        Thread eatingHabitsThread = new Thread(() -> {
-//            boolean isEmpty = userService.isEatingHabitsListEmpty();
-//        });
-//        productsThread.start();
-//
-//        productsThread.join();
-//        return new ArrayList<>();
+    public List<RecipeResponse> recommendRecipes() {
+        final List<RecipeModel> recipesByUserProducts = new ArrayList<>();
+        final List<RecipeModel> recipesByEatingHabits = new ArrayList<>();
+        final List<RecipeModel> recipesByAllergens = new ArrayList<>();
+        List<Thread> threads = new ArrayList<>();
+        threads.add(new Thread(() -> {
+            if (productService.isUserProductsListEmpty()) {
+                recipesByUserProducts.addAll(recipeRepository.findAll());
+            } else {
+                recipesByUserProducts.addAll(filterByUserProducts());
+            }
+        }));
+        threads.add(new Thread(() -> {
+            if (allergenService.isUserAllergensListEmpty()) {
+                recipesByAllergens.addAll(recipeRepository.findAll());
+            } else {
+                recipesByAllergens.addAll(filterByAllergens());
+            }
+        }));
+
+        threads.add(new Thread(() -> {
+            if (userService.isEatingHabitsListEmpty()) {
+                recipesByEatingHabits.addAll(recipeRepository.findAll());
+            } else {
+                recipesByEatingHabits.addAll(filterByEatingHabits());
+            }
+        }));
+
+        threads.forEach(Thread::start);
+        threads.forEach(t -> {
+            try {
+                t.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+        
     }
 
     private List<RecipeModel> filterByUserProducts() {
@@ -267,6 +286,29 @@ public class RecipeService {
                                 .map(y -> y.getProduct().getId())
                                 .collect(Collectors.toList()))
                 )
+                .collect(Collectors.toList());
+    }
+
+    private List<RecipeModel> filterByAllergens() {
+        UserModel user = authService.getCurrentUser();
+        List<RecipeModel> recipes = recipeRepository.findAll();
+        List<Long> userAllergensIds = user.getUserAllergens()
+                .stream()
+                .map(UserAllergenModel::getAllergene)
+                .map(AllergenModel::getId)
+                .collect(Collectors.toList());
+        return recipes
+                .stream()
+                .filter(r -> {
+                    var recipeAllergenIds = r.getProductRecipeList()
+                            .stream()
+                            .flatMap(x -> x.getProduct()
+                                    .getProductAllergens()
+                                    .stream()
+                                    .map(y -> y.getAllergene().getId()))
+                            .collect(Collectors.toList());
+                    return recipeAllergenIds.stream().noneMatch(userAllergensIds::contains);
+                })
                 .collect(Collectors.toList());
     }
 }
