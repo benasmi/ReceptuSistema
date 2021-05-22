@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.recipes'
-version = '0.0.1-SNAPSHOT'
+version = 'RECEPTAI'
 sourceCompatibility = '11'
 
 configurations {
