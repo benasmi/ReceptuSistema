@@ -4,10 +4,13 @@ import com.recipes.system.contracts.ProductResponse;
 import com.recipes.system.contracts.ShoppingCartProductResponse;
 import com.recipes.system.contracts.UserProductRequest;
 import com.recipes.system.contracts.UserProductResponse;
+import com.recipes.system.models.AllergenModel;
+import com.recipes.system.models.ProductCategoryModel;
 import com.recipes.system.models.ProductModel;
 import com.recipes.system.models.ProductRecipeModel;
 import com.recipes.system.models.UserModel;
 import com.recipes.system.models.UserProductModel;
+import com.recipes.system.repository.ProductCategoryRepository;
 import com.recipes.system.repository.ProductRepository;
 import com.recipes.system.repository.RecipeRepository;
 import com.recipes.system.repository.UserRepository;
@@ -27,12 +30,14 @@ public class ProductService {
     private final AuthService authService;
     private final UserRepository userRepository;
     private final RecipeRepository recipeRepository;
+    private final ProductCategoryRepository productCategoryRepository;
 
-    public ProductService(ProductRepository productRepository, AuthService authService, UserRepository userRepository, RecipeRepository recipeRepository) {
+    public ProductService(ProductRepository productRepository, AuthService authService, UserRepository userRepository, ProductCategoryRepository productCategoryRepository, RecipeRepository recipeRepository) {
         this.authService = authService;
         this.userRepository = userRepository;
         this.productRepository = productRepository;
         this.recipeRepository = recipeRepository;
+        this.productCategoryRepository = productCategoryRepository;
     }
 
     public List<ProductResponse> getProducts() {
@@ -46,6 +51,11 @@ public class ProductService {
                 .map(UserProductResponse::fromProductModel)
                 .collect(Collectors.toList());
         return products;
+    }
+
+    public boolean isUserProductsListEmpty() {
+        UserModel user = authService.getCurrentUser();
+        return user.getUserProducts().isEmpty();
     }
 
     public void addUserProduct(UserProductRequest request) {
@@ -93,6 +103,16 @@ public class ProductService {
         return missingProducts
                 .stream()
                 .map(ProductResponse::fromProduct)
+                .collect(Collectors.toList());
+    }
+
+    public List<ProductResponse> getCategoryProducts(Long id) {
+        ProductCategoryModel productCategoryModel = productCategoryRepository.findById(id).orElseThrow(() -> {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Product category does not exist");
+        });
+        return productCategoryModel.getProducts()
+                .stream()
+                .map(x -> new ProductResponse(x.getId(), x.getName()))
                 .collect(Collectors.toList());
     }
 }

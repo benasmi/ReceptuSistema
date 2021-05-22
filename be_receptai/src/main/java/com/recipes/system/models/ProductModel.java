@@ -3,6 +3,7 @@ package com.recipes.system.models;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -23,6 +24,8 @@ public class ProductModel {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ProductRecipeModel> productRecipeList;
 
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductAllergenModel> productAllergens;
 
     public ProductModel(String name) {
        this.name = name;

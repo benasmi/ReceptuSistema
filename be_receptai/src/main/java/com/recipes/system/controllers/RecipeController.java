@@ -73,4 +73,9 @@ public class RecipeController {
             @RequestParam(name = "price") Optional<RecipeModel.Price> price) {
         return recipeService.getRecipePage(page, size, difficulty, price);
     }
+
+    @GetMapping("/recommended")
+    public List<RecipeResponse> recommendRecipes() throws InterruptedException {
+        return recipeService.recommendRecipes();
+    }
 }
