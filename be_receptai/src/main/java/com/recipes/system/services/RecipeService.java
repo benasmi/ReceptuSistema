@@ -13,10 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -192,6 +189,7 @@ public class RecipeService {
         final List<RecipeModel> recipesByUserProducts = new ArrayList<>();
         final List<RecipeModel> recipesByEatingHabits = new ArrayList<>();
         final List<RecipeModel> recipesByAllergens = new ArrayList<>();
+
         List<Thread> threads = new ArrayList<>();
         threads.add(new Thread(() -> {
             if (productService.isUserProductsListEmpty()) {
@@ -200,6 +198,7 @@ public class RecipeService {
                 recipesByUserProducts.addAll(filterByUserProducts());
             }
         }));
+
         threads.add(new Thread(() -> {
             if (allergenService.isUserAllergensListEmpty()) {
                 recipesByAllergens.addAll(recipeRepository.findAll());
@@ -224,7 +223,13 @@ public class RecipeService {
                 e.printStackTrace();
             }
         });
-        
+
+        return recipesByUserProducts
+                .stream()
+                .filter(recipesByEatingHabits::contains)
+                .filter(recipesByAllergens::contains)
+                .map(RecipeResponse::fromRecipeProducts)
+                .collect(Collectors.toList());
     }
 
     private List<RecipeModel> filterByUserProducts() {
