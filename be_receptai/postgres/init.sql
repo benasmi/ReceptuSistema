@@ -129,7 +129,7 @@ CREATE TABLE IF NOT EXISTS public.habit_product_category
             REFERENCES habit (id),
     CONSTRAINT fk_habit_product_category_productCategoryId
         FOREIGN KEY (product_category_id)
-            REFERENCES users (id)
+            REFERENCES product_category (id)
 
 
 );
