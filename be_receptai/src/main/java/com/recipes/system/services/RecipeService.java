@@ -215,7 +215,7 @@ public class RecipeService {
             }
         }));
 
-        threads.forEach(Thread::start);
+        threads.forEach(Thread::run);
         threads.forEach(t -> {
             try {
                 t.join();
