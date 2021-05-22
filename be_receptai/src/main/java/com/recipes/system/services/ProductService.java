@@ -5,8 +5,10 @@ import com.recipes.system.contracts.UserAllergenRequest;
 import com.recipes.system.contracts.UserProductRequest;
 import com.recipes.system.contracts.UserProductResponse;
 import com.recipes.system.models.AllergenModel;
+import com.recipes.system.models.ProductCategoryModel;
 import com.recipes.system.models.ProductModel;
 import com.recipes.system.models.UserModel;
+import com.recipes.system.repository.ProductCategoryRepository;
 import com.recipes.system.repository.ProductRepository;
 import com.recipes.system.repository.UserRepository;
 import org.springframework.http.HttpStatus;
@@ -22,11 +24,13 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final AuthService authService;
     private final UserRepository userRepository;
+    private final ProductCategoryRepository productCategoryRepository;
 
-    public ProductService(ProductRepository productRepository, AuthService authService, UserRepository userRepository) {
+    public ProductService(ProductRepository productRepository, AuthService authService, UserRepository userRepository, ProductCategoryRepository productCategoryRepository) {
         this.authService = authService;
         this.userRepository = userRepository;
         this.productRepository = productRepository;
+        this.productCategoryRepository = productCategoryRepository;
     }
 
     public List<ProductResponse> getProducts(){
@@ -57,4 +61,13 @@ public class ProductService {
         userRepository.save(user);
     }
 
+    public List<ProductResponse> getCategoryProducts(Long id) {
+        ProductCategoryModel productCategoryModel = productCategoryRepository.findById(id).orElseThrow(() -> {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Product category does not exist");
+        });
+        return productCategoryModel.getProducts()
+                .stream()
+                .map(x -> new ProductResponse(x.getId(), x.getName()))
+                .collect(Collectors.toList());
+    }
 }
