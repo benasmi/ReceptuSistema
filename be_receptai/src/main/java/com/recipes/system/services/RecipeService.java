@@ -215,7 +215,8 @@ public class RecipeService {
                 .map(UserProductModel::getProduct)
                 .collect(Collectors.toList());
         List<RecipeModel> recipes = recipeRepository.findAll();
-        List<RecipeModel> filteredRecipes = recipes
+
+        return recipes
                 .stream()
                 // receptai
                 .filter(x -> userProducts
@@ -227,29 +228,45 @@ public class RecipeService {
                                 .map(y -> y.getProduct().getId())
                                 .collect(Collectors.toList())))
                 .collect(Collectors.toList());
-        return filteredRecipes;
     }
 
     private List<RecipeModel> filterByEatingHabits() {
         UserModel user = authService.getCurrentUser();
-        List<EatingHabitModel> userHabits = user.getUserEatingHabits()
+
+        List<EatingHabitModel> userHabits = user
+                .getUserEatingHabits()
                 .stream()
                 .map(UserEatingHabitModel::getHabit)
                 .collect(Collectors.toList());
-        List<RecipeModel> recipes = recipeRepository.findAll();
-        List<RecipeModel> filteredRecipes = recipes
-                .stream()
-                .filter(r -> userHabits
-                        .stream()
-                        .map(uh -> uh.getProductCategories()
-                            .stream()
-                            .map(pc -> pc.getProductCategory()
-                                .getProducts()
-                                    .stream()
-                                    .map(ProductModel::getId)
-                                    .collect(Collectors.toList()).containsAll(r.getProductRecipeList()
-                                    .stream().map(y -> y.getProduct().getId()).collect(Collectors.toList())))
-                        ).collect(Collectors.toList());
 
+        List<ProductModel> habitProducts = new ArrayList<>();
+        for (var userHabit : userHabits) {
+            var habitCategoryModels = userHabit.getProductCategories();
+            var productCategoryModels = habitCategoryModels.
+                    stream()
+                    .map(HabitCategoryModel::getProductCategory)
+                    .collect(Collectors.toList());
+            habitProducts.addAll(productCategoryModels
+                    .stream()
+                    .flatMap(x -> x.getProducts().stream())
+                    .collect(Collectors.toList()));
+        }
+
+        List<RecipeModel> recipes = recipeRepository.findAll();
+
+        return recipes
+                .stream()
+                // receptai
+                .filter(x -> habitProducts
+                        .stream()
+                        .map(ProductModel::getId)
+                        .collect(Collectors.toList())
+                        .containsAll(x.getProductRecipeList()
+                                .stream()
+                                // vieno recepto produktai
+                                .map(y -> y.getProduct().getId())
+                                .collect(Collectors.toList()))
+                )
+                .collect(Collectors.toList());
     }
 }
