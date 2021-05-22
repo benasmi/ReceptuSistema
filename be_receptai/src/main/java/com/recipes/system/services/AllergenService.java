@@ -45,6 +45,11 @@ public class AllergenService {
         return allergens;
     }
 
+    public boolean isUserAllergensListEmpty() {
+        UserModel user = authService.getCurrentUser();
+        return user.getUserAllergens().isEmpty();
+    }
+
     public void addUserAllergen(UserAllergenRequest request){
         UserModel user = authService.getCurrentUser();
         AllergenModel allergenModel = allergenRepository.findById(request.getId()).orElseThrow(() -> {
