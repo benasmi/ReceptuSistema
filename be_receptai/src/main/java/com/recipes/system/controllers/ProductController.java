@@ -26,8 +26,10 @@ public class ProductController {
     @PostMapping(path = "/user/")
     public void addUserProduct(@RequestBody UserProductRequest request) { productService.addUserProduct(request); }
     @DeleteMapping(path = "/user/{id}")
-    public void deleteUserProduct(@PathVariable Long id) {
-        productService.deleteUserProduct(id);
+    public void deleteUserProduct(@PathVariable Long id) { productService.deleteUserProduct(id); }
+    @PutMapping(path = "/user/{id}")
+    public void editUserProduct(@PathVariable Long id, @RequestBody EditUserProductRequest editItem) {
+        productService.editUserProduct(id, editItem);
     }
 
     @GetMapping(path = "/category/{id}")
