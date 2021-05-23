@@ -185,7 +185,7 @@ public class RecipeService {
         );
     }
 
-    public List<RecipeResponse> recommendRecipes() {
+    public RecipePage recommendRecipes() {
         final List<RecipeModel> recipesByUserProducts = new ArrayList<>();
         final List<RecipeModel> recipesByEatingHabits = new ArrayList<>();
         final List<RecipeModel> recipesByAllergens = new ArrayList<>();
@@ -223,13 +223,13 @@ public class RecipeService {
                 e.printStackTrace();
             }
         });
-
-        return recipesByUserProducts
+        var filteredRecipes = recipesByUserProducts
                 .stream()
                 .filter(recipesByEatingHabits::contains)
                 .filter(recipesByAllergens::contains)
-                .map(RecipeResponse::fromRecipeProducts)
+                .map(RecipeResponse::headerFromRecipeProducts)
                 .collect(Collectors.toList());
+        return new RecipePage(filteredRecipes, 0, filteredRecipes.size(), 1);
     }
 
     private List<RecipeModel> filterByUserProducts() {

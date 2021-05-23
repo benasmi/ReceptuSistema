@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Button, Col, Container, Row } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { getRecipePage } from '../api/recipesApi';
+import { getRecipePage, getRecommendedRecipes } from '../api/recipesApi';
 import Filter from './Filter';
 import GeneralRecipeCard from './GeneralRecipeCard';
 import { IRecipe } from './RecipeCard';
@@ -29,13 +29,24 @@ export default function RecipeList() {
     const [recipePage, setRecipePage] = useState<IRecipePage>({ recipes: [], currentPage: 0, totalItems: 0, totalPages: 0});
     const [pagingProps, setPagingProps] = useState<IPagingProps>({ page: 0, size: 3 })
     const [filterProps, setfilterProps] = useState<IFilterProps>({ price: '', difficulty: ''})
+    const [showRecommended, setShowRecommended] = useState<boolean>(false);
     const history = useHistory();
 
     useEffect(() => {
-        getRecipePage(pagingProps, filterProps)
+        if (showRecommended) {
+            getRecommendedRecipes()
+                .then((data: IRecipePage) => { 
+                    setRecipePage(data);
+                    if (data.totalItems === 0) toast.info('Unfortunately, there are no recommended recipes.'); 
+                })
+                .catch(() => toast.error('Unable to recommend recipes.'));
+        } else {
+            getRecipePage(pagingProps, filterProps)
             .then((data: IRecipePage) => setRecipePage(data))
             .catch(() => toast.error('Unable to get recipes.'))
-    }, [pagingProps, filterProps])
+        }
+        
+    }, [pagingProps, filterProps, showRecommended])
 
     const handleClick = (id: number) => {
         history.push(`/app/recipe/${id}`);
@@ -60,7 +71,21 @@ export default function RecipeList() {
             </Row>
             <Row>
                 <Col md="3">
-                    <Filter setFilteredProps={setfilterProps} />
+                    <Row className="text-center mb-3">
+                        <Col>
+                            <Button onClick={() => setShowRecommended(!showRecommended)}>
+                                {showRecommended ? 'Show All Recipes' : 'Show Recommended Recipes'}
+                            </Button>
+                        </Col>
+                    </Row>
+                    {!showRecommended && (
+                        <Row>
+                            <Col>
+                                <Filter setFilteredProps={setfilterProps} />
+                            </Col>
+                        </Row>
+                    )}
+                    
                 </Col>
                 <Col>
                     {recipePage?.recipes.map((recipe) => (
@@ -71,7 +96,7 @@ export default function RecipeList() {
                         </Row> 
               
                     ))}
-                   { recipePage.totalItems !== 0 && <div>
+                   { !showRecommended && recipePage.totalItems !== 0 && <div>
                         <Button variant="primary" disabled={previousPageUnavailable} onClick={() => handleClickPage('back')} >Back</Button>{' '}
                         <Button variant="primary" disabled={nextPageUnavailable} onClick={() => handleClickPage('next')}>Next</Button>
                     </div> }
