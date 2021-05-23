@@ -1,13 +1,9 @@
 package com.recipes.system.controllers;
 
-import com.recipes.system.contracts.ProductRecipeRequest;
-import com.recipes.system.contracts.RecipePage;
-import com.recipes.system.contracts.RecipeRequest;
-import com.recipes.system.contracts.RecipeResponse;
+import com.recipes.system.contracts.*;
 import com.recipes.system.models.RecipeModel;
 import com.recipes.system.services.RecipeService;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -75,7 +71,7 @@ public class RecipeController {
     }
 
     @GetMapping("/recommended")
-    public List<RecipeResponse> recommendRecipes() throws InterruptedException {
+    public RecipePage recommendRecipes() {
         return recipeService.recommendRecipes();
     }
 }
