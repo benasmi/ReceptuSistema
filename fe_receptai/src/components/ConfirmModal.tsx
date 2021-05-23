@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Modal as ModalBS } from 'react-bootstrap';
 
-type ModalProps = {
+export type ModalProps = {
   message: string;
   onConfirm: Function;
   show: boolean;
