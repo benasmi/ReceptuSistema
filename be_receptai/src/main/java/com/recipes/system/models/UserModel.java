@@ -88,4 +88,16 @@ public class UserModel {
                 .setIntensity(intensity);
 
     }
+    public void editUserProducts(ProductModel product, UserProductModel.Quantity quantityType, int quantity) {
+        UserProductModel p = userProducts
+                .stream()
+                .filter(x -> x.getProduct().getId() == product.getId())
+                .findFirst()
+                .orElseThrow(() -> {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Allergen does not exist");
+                });
+        p.setQuantityType(quantityType);
+        p.setQuantity(quantity);
+
+    }
 }

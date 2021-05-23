@@ -25,8 +25,6 @@ public class UserService {
         this.authService = authService;
     }
 
-
-
     public UserResponse getProfile() {
         UserModel userModel = authService.getCurrentUser();
         return UserResponse.fromUser(userModel);

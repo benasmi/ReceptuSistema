@@ -1,9 +1,6 @@
 package com.recipes.system.services;
 
-import com.recipes.system.contracts.ProductResponse;
-import com.recipes.system.contracts.ShoppingCartProductResponse;
-import com.recipes.system.contracts.UserProductRequest;
-import com.recipes.system.contracts.UserProductResponse;
+import com.recipes.system.contracts.*;
 import com.recipes.system.models.AllergenModel;
 import com.recipes.system.models.ProductCategoryModel;
 import com.recipes.system.models.ProductModel;
@@ -65,6 +62,14 @@ public class ProductService {
         });
         Long lastId = productRepository.getLastId() + 1;
         user.addUserProduct(productModel, request.getQuantity(), request.getQuantityType(), lastId);
+        userRepository.save(user);
+    }
+    public void editUserProduct(Long productId, EditUserProductRequest request){
+        UserModel user = authService.getCurrentUser();
+        ProductModel product = productRepository.findById(productId).orElseThrow(() -> {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Product does not exist");
+        });
+        user.editUserProducts(product, request.getQuantityType(), request.getQuantity());
         userRepository.save(user);
     }
 
