@@ -2,6 +2,7 @@ package com.recipes.system.services;
 
 
 import com.auth0.jwt.JWT;
+import com.recipes.system.contracts.EmailClient;
 import com.recipes.system.contracts.UserRequest;
 import com.recipes.system.models.UserModel;
 import com.recipes.system.repository.UserRepository;
@@ -24,15 +25,20 @@ public class AuthService {
     @Value("${jwt.auth.bearer.secret}")
     private String secretKey;
 
+    @Value("${spring.mail.username}")
+    private String fromEmail;
+
     @Value("${jwt.auth.bearer.expiration-time}")
     private String expirationTime;
 
     private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
+    private final EmailService emailService;
 
-    public AuthService(UserRepository userRepository, AuthenticationManager authenticationManager) {
+    public AuthService(UserRepository userRepository, AuthenticationManager authenticationManager, EmailService emailService) {
         this.userRepository = userRepository;
         this.authenticationManager = authenticationManager;
+        this.emailService = emailService;
     }
 
     public void registerUser(UserRequest userRequest){
@@ -40,6 +46,9 @@ public class AuthService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Registration failed");
         }
         userRepository.save(UserRequest.fromUserRequest(userRequest));
+        EmailClient client = new EmailClient(userRequest.getName(), userRequest.getEmail());
+        String message = emailService.generateMailContent(client);
+        emailService.sendSimpleMail(userRequest.getEmail(), fromEmail, "Welcome", message);
     }
 
     public String loginUser(UserRequest userRequest){
