@@ -14,7 +14,8 @@ interface IProductItemProps {
 
 interface IEditItemSelectProps {
     product : IProduct;
-    editItem: Function
+    editItem: Function;
+    setEditable: Function;
 }
 
 export interface IEditProduct {
@@ -37,20 +38,11 @@ export default function ProductItem({ product, modalOpen, setModalOpen, setUserP
     }
 
     function editProduct(editProduct: IEditProduct) {
-        
-        editUserProduct(editProduct.id, editProduct)
-            .then(() => {
-                toast.success('Updated successfully');
-                setUserProducts((oldVal: IProduct[]) => (oldVal.map(product => {
-                    if (product.id === editProduct.id) return {...product, quantity: editProduct.quantity, quantityType: editProduct.quantityType};
-                    else return product ;
-                })));
-            })
-            .catch(() => toast.error('Failed to edit'));
-        setEditingItem(false);
+        setUserProducts((oldVal: IProduct[]) => (oldVal.map(product => {
+            if (product.id === editProduct.id) return {...product, quantity: editProduct.quantity, quantityType: editProduct.quantityType};
+            else return product ;
+        })));      
     }
-    
-
     return (
     <>
         <ConfirmModal 
@@ -61,8 +53,8 @@ export default function ProductItem({ product, modalOpen, setModalOpen, setUserP
             />
         <tr key={product.id}>
             <td>{product.name}</td>
-            <td>{editingItem ? (<EditQuantity product={product} editItem={editProduct} />) : product.quantity}</td>
-            <td>{editingItem ? (<EditQuantityTypeSelect product={product} editItem={editProduct} />) : product.quantityType}</td>
+            <td>{editingItem ? (<EditQuantity product={product} editItem={editProduct} setEditable={setEditingItem} />) : product.quantity}</td>
+            <td>{editingItem ? (<EditQuantityTypeSelect product={product} editItem={editProduct} setEditable={setEditingItem} />) : product.quantityType}</td>
             <td>
                 <Button variant="primary" onClick={() => setEditingItem(true)}>Edit</Button>{' '}
                 <Button variant="danger" onClick={() => setModalOpen(true)}>Delete</Button>
@@ -73,11 +65,20 @@ export default function ProductItem({ product, modalOpen, setModalOpen, setUserP
     )
 }
 
-function EditQuantityTypeSelect({ product, editItem }: IEditItemSelectProps) {
-
+function EditQuantityTypeSelect({ product, editItem, setEditable }: IEditItemSelectProps) {
+    
+    function editProductCall(quantityType: string) {
+        editUserProduct(product.id || -1, {...product, quantityType: quantityType, id: product.id || -1 })
+        .then(() => {
+            toast.success('Updated successfully');
+        })
+        .catch(() => toast.error('Failed to edit'));
+        setEditable(false);
+    }
     return (
         <Form.Control defaultValue={product.quantityType} onChange={(e) => {
             editItem({id: product.productId, quantityType: e.target.value, quantity: product.quantity});
+            editProductCall(e.target.value);
         }} as="select">
             <option value="g">g</option>
             <option value="kg">kg</option>
@@ -87,11 +88,25 @@ function EditQuantityTypeSelect({ product, editItem }: IEditItemSelectProps) {
     );
 }
 
-function EditQuantity({ product, editItem }: IEditItemSelectProps) {
+function EditQuantity({ product, editItem, setEditable }: IEditItemSelectProps) {
+    const [quantity, setQuantity] = useState<number>(product.quantity);
 
+    function editProductCall() {
+        editUserProduct(product.id || -1, {...product, quantity, id: product.id || -1 })
+        .then(() => {
+            toast.success('Updated successfully');
+        })
+        .catch(() => toast.error('Failed to edit'));
+        setEditable(false);
+    }
     return (
-        <Form.Control defaultValue={product.quantity} onChange={(e) => {
-            editItem({id: product.productId, quantity: e.target.value});
+        <>
+         <Form.Control defaultValue={product.quantity} onChange={(e) => {
+             setQuantity(e.target.value as unknown as number);
+             editItem({id: product.productId, quantity: e.target.value, quantityType: product.quantityType});
         }} as="input"/>
+        <Button onClick={editProductCall}>Save</Button>
+        </>
+       
     );
 }
